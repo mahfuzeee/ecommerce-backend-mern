@@ -2,6 +2,7 @@ const userRepository = require("../repositories/user.repository");
 const ApiError = require("../utils/ApiError");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/tokenHelpers");
+const sendResponse = require("../utils/apiResponse");
 
 const userService = {
   // Create a new user
@@ -36,9 +37,9 @@ const userService = {
     }
   },
 
-  //Get a user by ID
-  getUser: async (id) => {
-    const user = await userRepository.getUserById(id);
+  //Get a user profile
+  getUser: async (email) => {
+    const user = await userRepository.getUser(email);
 
     if (!user) {
       throw new ApiError(404, "User not found");

@@ -63,40 +63,38 @@ const userController = {
     }
   },
 
-  getUser: async (req, res) => {
+  getUser: async (req, res, next) => {
     try {
-      const user = await userservice.getUserByEmail(req.params.email);
-      return sendResponse(res, { data: user });
-    } catch (error) {
+      const email = req.headers.email;
+
+      const user = await userservice.getUser(email);
+
       return sendResponse(res, {
-        statusCode: error.statusCode,
-        message: error.message,
+        message: "User Dashboard",
+        data: user,
       });
+    } catch (error) {
+      return next(error);
     }
   },
 
-  updateUser: async (req, res) => {
+  updateUser: async (req, res, next) => {
     try {
       const user = await userservice.updateUser(req.params.id, req.body);
       return sendResponse(res, { data: user });
     } catch (error) {
-      return sendResponse(res, {
-        statusCode: error.statusCode,
-        message: error.message,
-      });
+      return next(error);
     }
   },
 
-  deleteUser: async (req, res) => {
+  deleteUser: async (req, res, next) => {
     try {
       const user = await userservice.deleteUser(req.params.id);
       return sendResponse(res, { data: user });
     } catch (error) {
-      return sendResponse(res, {
-        statusCode: error.statusCode,
-        message: error.message,
-      });
+      return next(error);
     }
   },
 };
+
 module.exports = userController;

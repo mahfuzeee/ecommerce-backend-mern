@@ -1,4 +1,4 @@
-const { generateToken } = require("../utils/tokenHelpers");
+const { verifyToken } = require("../utils/tokenHelpers");
 const ApiError = require("../utils/ApiError");
 
 const authVerificationUser = async (req, res, next) => {
@@ -9,7 +9,7 @@ const authVerificationUser = async (req, res, next) => {
       return next(new ApiError(401, "Unauthorized"));
     }
 
-    const decodedToken = generateToken(token);
+    const decodedToken = verifyToken(token);
 
     if (decodedToken) {
       const email = decodedToken["email"];
