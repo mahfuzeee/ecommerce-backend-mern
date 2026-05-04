@@ -3,15 +3,40 @@ const ApiError = require("../utils/ApiError");
 const sendResponse = require("../utils/apiResponse");
 
 const userController = {
-  createUser: async (req, res) => {
+  // Create a new user
+  createUser: async (req, res, next) => {
     try {
       const user = await userservice.createUser(req.body);
-      return sendResponse(res, { data: user });
-    } catch (error) {
+
       return sendResponse(res, {
-        statusCode: error.statusCode,
-        message: error.message,
+        message: "User created successfully",
+        data: user,
       });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  // User Login
+  loginUser: async (req, res, next) => {
+    try {
+      const user = await userservice.loginUser(req.body);
+      return sendResponse(res, {
+        message: "User logged in successfully",
+        data: user,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  //logout user
+  logoutUser: async (req, res, next) => {
+    try {
+      const result = await userservice.logoutUser(req.headers.token);
+      return sendResponse(res, { data: result });
+    } catch (error) {
+      return next(error);
     }
   },
 
@@ -26,18 +51,8 @@ const userController = {
       });
     }
   },
-  getUserById: async (req, res) => {
-    try {
-      const user = await userservice.getUserById(req.params.id);
-      return sendResponse(res, { data: user });
-    } catch (error) {
-      return sendResponse(res, {
-        statusCode: error.statusCode,
-        message: error.message,
-      });
-    }
-  },
-  getUserByEmail: async (req, res) => {
+
+  getUser: async (req, res) => {
     try {
       const user = await userservice.getUserByEmail(req.params.email);
       return sendResponse(res, { data: user });

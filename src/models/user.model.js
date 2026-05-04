@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const loger = require("../utils/logger");
 
 const userSchema = new mongoose.Schema(
   {
@@ -8,6 +10,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
     addresses: [
       {
+        address: String,
         street: String,
         city: String,
         state: String,
@@ -18,6 +21,17 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false },
 );
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  try {
+    const salt = await bcrypt.genSalt(10); // Generate salt
+    this.password = await bcrypt.hash(this.password, salt); // Replace plain text with hash
+  } catch (error) {
+    loger.info({ err: error }, "Failed to hash password");
+  }
+});
 
 const User = mongoose.model("User", userSchema);
 

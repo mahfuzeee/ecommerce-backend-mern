@@ -2,10 +2,23 @@ const userRepository = require("../repositories/user.repository");
 const ApiError = require("../utils/ApiError");
 
 const userService = {
-  getAllUsers: async () => {
-    return await userRepository.getAllUsers();
+  // Create a new user
+  createUser: async (user) => {
+    const existingUser = await userRepository.getUserByEmail(user.email);
+
+    if (existingUser) {
+      throw new ApiError(400, "User already exists");
+    }
+    return await userRepository.createUser(user);
   },
-  getUserById: async (id) => {
+
+  // User Login
+  loginUser: async (credentials) => {
+    return await userRepository.loginUser(credentials);
+  },
+
+  //Get a user by ID
+  getUser: async (id) => {
     const user = await userRepository.getUserById(id);
 
     if (!user) {
@@ -23,9 +36,7 @@ const userService = {
 
     return user;
   },
-  createUser: async (user) => {
-    return await userRepository.createUser(user);
-  },
+
   updateUser: async (id, payload) => {
     const user = await userRepository.updateUser(id, payload);
 
@@ -43,6 +54,10 @@ const userService = {
     }
 
     return user;
+  },
+
+  logoutUser: async (token) => {
+    return await userRepository.logoutUser(token);
   },
 };
 
