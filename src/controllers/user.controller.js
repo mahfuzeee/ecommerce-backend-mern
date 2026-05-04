@@ -2,6 +2,13 @@ const userservice = require("../services/user.service");
 const ApiError = require("../utils/ApiError");
 const sendResponse = require("../utils/apiResponse");
 
+const options = {
+  maxAge: process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
+  httpOnly: false,
+  sameSite: "none",
+  secure: true,
+};
+
 const userController = {
   // Create a new user
   createUser: async (req, res, next) => {
@@ -21,6 +28,10 @@ const userController = {
   loginUser: async (req, res, next) => {
     try {
       const user = await userservice.loginUser(req.body);
+
+      //set cookie
+      res.cookie("u_token", user.token, options);
+
       return sendResponse(res, {
         message: "User logged in successfully",
         data: user,
@@ -33,8 +44,8 @@ const userController = {
   //logout user
   logoutUser: async (req, res, next) => {
     try {
-      const result = await userservice.logoutUser(req.headers.token);
-      return sendResponse(res, { data: result });
+      res.clearCookie("u_token");
+      return sendResponse(res, { message: "User logged out successfully" });
     } catch (error) {
       return next(error);
     }

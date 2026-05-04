@@ -14,7 +14,7 @@ const userRepository = {
     return await User.findById(id);
   },
   getUserByEmail: async (email) => {
-    return await User.findOne({ email });
+    return await User.findOne({ email }).select("+password");
   },
 
   updateUser: async (id, user) => {

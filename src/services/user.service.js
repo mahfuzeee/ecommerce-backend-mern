@@ -1,5 +1,7 @@
 const userRepository = require("../repositories/user.repository");
 const ApiError = require("../utils/ApiError");
+const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/tokenHelpers");
 
 const userService = {
   // Create a new user
@@ -14,7 +16,24 @@ const userService = {
 
   // User Login
   loginUser: async (credentials) => {
-    return await userRepository.loginUser(credentials);
+    try {
+      const user = await userRepository.getUserByEmail(credentials.email);
+
+      if (!user) {
+        throw new ApiError(401, "Invalid credentials");
+      }
+
+      const isMatch = await bcrypt.compare(credentials.password, user.password);
+
+      if (!isMatch) {
+        throw new ApiError(401, "Invalid credentials");
+      }
+
+      const token = generateToken(user.email, user._id.toString());
+      return { user, token };
+    } catch (error) {
+      throw new ApiError(401, "Invalid credentials");
+    }
   },
 
   //Get a user by ID
@@ -54,10 +73,6 @@ const userService = {
     }
 
     return user;
-  },
-
-  logoutUser: async (token) => {
-    return await userRepository.logoutUser(token);
   },
 };
 
