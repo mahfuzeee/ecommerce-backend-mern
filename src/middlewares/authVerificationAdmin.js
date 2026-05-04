@@ -1,0 +1,29 @@
+const { verifyToken } = require("../utils/tokenHelpers");
+const ApiError = require("../utils/ApiError");
+
+const authVerificationAdmin = async (req, res, next) => {
+  try {
+    const token = req.cookies["a_token"];
+
+    if (!token) {
+      return next(new ApiError(401, "Unauthorized"));
+    }
+
+    const decodedToken = verifyToken(token);
+
+    if (decodedToken) {
+      const email = decodedToken["email"];
+      const _id = decodedToken["_id"];
+
+      req.headers.email = email;
+      req.headers._id = _id;
+      next();
+    } else {
+      return next(new ApiError(401, "Unauthorized"));
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports = authVerificationAdmin;
