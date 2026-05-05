@@ -2,6 +2,7 @@ const userservice = require("../services/user.service");
 const ApiError = require("../utils/ApiError");
 const sendResponse = require("../utils/apiResponse");
 const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/tokenHelpers");
 
 const options = {
   maxAge: process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
@@ -90,10 +91,20 @@ const userController = {
       if (password) {
         updatedData.password = await bcrypt.hash(password, 10);
       }
-      const user = await userservice.updateUser(_id.toString(), updatedData);
+      const updatedUser = await userservice.updateUser(
+        _id.toString(),
+        updatedData,
+      );
+
+      const token = generateToken(
+        updatedUser.email,
+        updatedUser._id.toString(),
+      );
+      res.cookie("u_token", token, options);
+
       return sendResponse(res, {
         message: "User updated successfully",
-        data: user,
+        data: updatedUser,
       });
     } catch (error) {
       return next(error);
@@ -103,6 +114,8 @@ const userController = {
   deleteUser: async (req, res, next) => {
     try {
       const user = await userservice.deleteUser(req.headers._id.toString());
+      res.clearCookie("u_token");
+
       return sendResponse(res, {
         message: "User deleted successfully",
       });
