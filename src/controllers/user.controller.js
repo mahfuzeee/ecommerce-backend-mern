@@ -1,6 +1,7 @@
 const userservice = require("../services/user.service");
 const ApiError = require("../utils/ApiError");
 const sendResponse = require("../utils/apiResponse");
+const bcrypt = require("bcryptjs");
 
 const options = {
   maxAge: process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
@@ -54,7 +55,10 @@ const userController = {
   getAllUsers: async (req, res) => {
     try {
       const users = await userservice.getAllUsers();
-      return sendResponse(res, { data: users });
+      return sendResponse(res, {
+        message: "Users retrieved successfully",
+        data: users,
+      });
     } catch (error) {
       return sendResponse(res, {
         statusCode: error.statusCode,
@@ -80,8 +84,17 @@ const userController = {
 
   updateUser: async (req, res, next) => {
     try {
-      const user = await userservice.updateUser(req.params.id, req.body);
-      return sendResponse(res, { data: user });
+      const { name, email, password } = req.body;
+      const _id = req.headers._id;
+      const updatedData = { name, email };
+      if (password) {
+        updatedData.password = await bcrypt.hash(password, 10);
+      }
+      const user = await userservice.updateUser(_id.toString(), updatedData);
+      return sendResponse(res, {
+        message: "User updated successfully",
+        data: user,
+      });
     } catch (error) {
       return next(error);
     }
@@ -89,8 +102,10 @@ const userController = {
 
   deleteUser: async (req, res, next) => {
     try {
-      const user = await userservice.deleteUser(req.params.id);
-      return sendResponse(res, { data: user });
+      const user = await userservice.deleteUser(req.headers._id.toString());
+      return sendResponse(res, {
+        message: "User deleted successfully",
+      });
     } catch (error) {
       return next(error);
     }

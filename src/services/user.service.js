@@ -57,6 +57,7 @@ const userService = {
     return user;
   },
 
+  //update user data: name, email, password, etc.
   updateUser: async (id, payload) => {
     const user = await userRepository.updateUser(id, payload);
 
@@ -66,6 +67,8 @@ const userService = {
 
     return user;
   },
+
+  //Delete a user permanently
   deleteUser: async (id) => {
     const user = await userRepository.deleteUser(id);
 
