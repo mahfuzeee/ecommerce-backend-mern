@@ -19,6 +19,10 @@ const productRepository = {
   deleteProduct: async (id) => {
     return await Product.findByIdAndDelete(id);
   },
+
+  getProductsByCategoryId: async (categoryId) => {
+    return await Product.find({ category: categoryId });
+  },
 };
 
 module.exports = productRepository;
