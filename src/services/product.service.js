@@ -35,6 +35,15 @@ const productService = {
 
     return product;
   },
+
+  // Additional service methods for product filtering and searching
+  searchProducts: async (query) => {
+    return await productRepository.searchProducts(query);
+  },
+
+  filterProducts: async (query) => {
+    return await productRepository.filterProducts(query);
+  },
 };
 
 module.exports = productService;

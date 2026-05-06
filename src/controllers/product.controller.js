@@ -17,7 +17,8 @@ const productController = {
 
   getProductById: async (req, res, next) => {
     try {
-      const product = await productService.getProductById(req.params.id);
+      const id = req.params.id;
+      const product = await productService.getProductById(id.toString());
 
       return sendResponse(res, {
         message: "Product fetched successfully",
@@ -63,6 +64,35 @@ const productController = {
       return sendResponse(res, {
         message: "Product deleted successfully",
         data: null,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  // Additional controller methods for product filtering and searching
+  searchProducts: async (req, res, next) => {
+    try {
+      const { q } = req.query;
+      const query = q || "";
+      const products = await productService.searchProducts(query);
+
+      return sendResponse(res, {
+        message: "Products searched successfully",
+        data: products,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
+  filterProducts: async (req, res, next) => {
+    try {
+      const products = await productService.filterProducts(req.query);
+
+      return sendResponse(res, {
+        message: "Products filtered successfully",
+        data: products,
       });
     } catch (error) {
       return next(error);
