@@ -96,7 +96,7 @@ The health endpoint is available at:
 - `GET /` — list all products
 - `POST /` — create a new product
 - `GET /search` — search products
-- `GET /filter` — filter products
+- `GET /filter` — filter products by category, brand, price, and sort. Also pgination.
 - `GET /:id` — get product by ID
 - `PUT /:id` — update product by ID
 - `DELETE /:id` — delete product by ID
