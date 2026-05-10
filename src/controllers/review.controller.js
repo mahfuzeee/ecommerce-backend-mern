@@ -1,31 +1,59 @@
 const reviewService = require("../services/review.service");
-const ApiError = require("../utils/ApiError");
+const sendResponse = require("../utils/apiResponse");
 
 const reviewController = {
   createReview: async (req, res, next) => {
     try {
+      const user_id = req.headers._id; // Assuming user ID is sent in headers after authentication
+      req.body.user_id = user_id; // Attach user ID to the review data
       const review = await reviewService.createReview(req.body);
-      res.status(201).json(review);
+      return sendResponse(res, {
+        statusCode: 201,
+        message: "Review created successfully",
+        data: review,
+      });
     } catch (error) {
       next(error);
     }
   },
 
+  // This method is added to retrieve all reviews, which can be useful for admin purposes
+  getAllReviews: async (req, res, next) => {
+    try {
+      const reviews = await reviewService.getAllReviews(req.query);
+      return sendResponse(res, {
+        message: "All reviews retrieved successfully",
+        data: reviews,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // This method is added to retrieve reviews for a specific product
   getReviewsByProduct: async (req, res, next) => {
     try {
-      const reviews = await reviewService.getReviewsByProduct(
-        req.params.productId,
-      );
-      res.json(reviews);
+      const productId = req.params.productId;
+      const reviews = await reviewService.getReviewsByProduct(productId);
+
+      return sendResponse(res, {
+        message: "Reviews retrieved successfully",
+        data: reviews,
+      });
     } catch (error) {
       next(error);
     }
   },
 
+  // This method is added to retrieve reviews made by a specific user
   getReviewsByUser: async (req, res, next) => {
     try {
-      const reviews = await reviewService.getReviewsByUser(req.params.userId);
-      res.json(reviews);
+      const userId = req.params.userId;
+      const reviews = await reviewService.getReviewsByUser(userId);
+      return sendResponse(res, {
+        message: "Reviews retrieved successfully",
+        data: reviews,
+      });
     } catch (error) {
       next(error);
     }
@@ -37,7 +65,10 @@ const reviewController = {
       if (!review) {
         throw new ApiError(404, "Review not found");
       }
-      res.json(review);
+      return sendResponse(res, {
+        message: "Review updated successfully",
+        data: review,
+      });
     } catch (error) {
       next(error);
     }
@@ -49,7 +80,11 @@ const reviewController = {
       if (!review) {
         throw new ApiError(404, "Review not found");
       }
-      res.status(204).send();
+      return sendResponse(res, {
+        statusCode: 204,
+        message: "Review deleted successfully",
+        data: null,
+      });
     } catch (error) {
       next(error);
     }

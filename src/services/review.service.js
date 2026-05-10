@@ -4,13 +4,18 @@ const reviewService = {
   createReview: async (reviewData) => {
     return await reviewRepository.create(reviewData);
   },
-
+  // This method is added to retrieve all reviews, which can be useful for admin purposes
+  getAllReviews: async (query) => {
+    // Implement pagination, filtering, and sorting logic based on the query parameters
+    // For simplicity, we will just return all reviews here
+    return await reviewRepository.getAllReviews(query);
+  },
   getReviewsByProduct: async (productId) => {
-    return await reviewRepository.findByProductId(productId);
+    return await reviewRepository.getReviewsByProduct(productId);
   },
 
   getReviewsByUser: async (userId) => {
-    return await reviewRepository.findByUserId(userId);
+    return await reviewRepository.getReviewsByUser(userId);
   },
 
   updateReview: async (id, reviewData) => {
