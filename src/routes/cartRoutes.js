@@ -6,7 +6,11 @@ const router = express.Router();
 
 router.post("/", authVerificationUser, cartController.createCart);
 router.get("/", authVerificationUser, cartController.getCart);
-router.put("/update/:id", authVerificationUser, cartController.updateCart);
-router.delete("/delete/:id", authVerificationUser, cartController.deleteCart);
+router.put("/update/:cart_id", authVerificationUser, cartController.updateCart);
+router.delete(
+  "/delete/:cart_id",
+  authVerificationUser,
+  cartController.deleteCart,
+);
 
 module.exports = router;

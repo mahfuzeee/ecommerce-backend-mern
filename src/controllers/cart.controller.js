@@ -48,7 +48,7 @@ const cartController = {
   //Update the quantity of a cart item
   updateCart: async (req, res, next) => {
     try {
-      const cartId = req.params.id;
+      const cartId = req.params.cart_id;
       const userId = req.headers._id;
       const { product_id, quantity, increment } = req.body;
 
@@ -72,7 +72,7 @@ const cartController = {
   //Delete a cart item
   deleteCart: async (req, res, next) => {
     try {
-      const cartId = req.params.id;
+      const cartId = req.params.cart_id;
 
       await cartService.deleteCart(cartId);
       sendResponse(res, {

@@ -136,6 +136,12 @@ const cartRepository = {
       throw error;
     }
   },
+
+  //Delete a cart item
+  deleteCart: async (cartId) => {
+    const _id = new objectId(cartId);
+    return await Cart.deleteOne({ _id });
+  },
 };
 
 module.exports = cartRepository;
