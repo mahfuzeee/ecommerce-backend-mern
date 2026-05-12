@@ -23,7 +23,9 @@ const productSchema = new mongoose.Schema(
       index: true,
     },
 
-    stockQuantity: { type: Number, required: true, min: 0, default: 0 },
+    stock: { type: Number, required: true, min: 0, default: 0 },
+    color: { type: String, trim: true },
+    size: { type: String, trim: true },
     discountPrice: Number,
 
     isActive: { type: Boolean, default: true },
@@ -34,7 +36,7 @@ const productSchema = new mongoose.Schema(
       count: { type: Number, default: 0 },
     },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 const Product = mongoose.model("Product", productSchema);
