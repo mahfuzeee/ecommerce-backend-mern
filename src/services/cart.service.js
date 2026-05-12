@@ -1,8 +1,10 @@
 const cartRepository = require("../repositories/cart.repository");
 const productRepository = require("../repositories/product.repository");
 const ApiError = require("../utils/ApiError");
+const logger = require("../utils/logger");
 
 const cartService = {
+  //Add a product to the cart
   createCart: async (cartData) => {
     try {
       const { user_id, product_id, product_name, color, size, quantity } =
@@ -87,6 +89,48 @@ const cartService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  //Retrieve the cart items for a user
+  getCart: async (userId) => {
+    return await cartRepository.getCart(userId);
+  },
+
+  //Update the quantity of a cart item
+  updateCart: async (cartId, quantity, increment, userId, productId) => {
+    let initialQuantity = 1;
+
+    const existingCart = {
+      _id: cartId,
+      user_id: userId,
+    };
+    const newReqBody = {
+      quantity: parseInt(quantity),
+    };
+
+    if (increment) {
+      const product = await productRepository.getProductById(productId);
+      const carts = await cartRepository.findCartsByProductId(productId);
+
+      const totalQuantity = carts.reduce(
+        (total, cart) => total + parseInt(cart.quantity),
+        0,
+      );
+
+      if (product?.stock > totalQuantity + initialQuantity) {
+        const data = await cartRepository.updateCart(existingCart, newReqBody);
+        return data;
+      } else {
+        throw new ApiError(400, "Requested quantity exceeds available stock");
+      }
+    } else {
+      return await cartRepository.updateCart(existingCart, newReqBody);
+    }
+  },
+
+  //Delete a cart item
+  deleteCart: async (cartId) => {
+    return await cartRepository.deleteCart(cartId);
   },
 };
 
