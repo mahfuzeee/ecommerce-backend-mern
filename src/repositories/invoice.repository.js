@@ -15,7 +15,7 @@ const invoiceRepository = {
         payableAmount: parseFloat(invoiceData.totalPayable).toFixed(2),
         cus_details: invoiceData.customerDetails,
         ship_details: invoiceData.shippingDetails,
-        trans_id: invoiceData.transactionId,
+        tran_id: invoiceData.transactionId,
         val_id: invoiceData.validationId,
         vat: invoiceData.vat,
         totalAmount: invoiceData.totalAmount,
@@ -73,10 +73,16 @@ const invoiceRepository = {
     return products;
   },
 
-  updateInvoice: async (invoiceId, updateData) => {
-    return await Invoice.findByIdAndUpdate(invoiceId, updateData, {
-      new: true,
-    });
+  //Update invoice payment status
+  updateInvoice: async (transactionId, paymentStatus) => {
+    return await Invoice.updateOne(
+      {
+        tran_id: transactionId,
+      },
+      {
+        payment_status: paymentStatus,
+      },
+    );
   },
 
   deleteInvoice: async (invoiceId) => {

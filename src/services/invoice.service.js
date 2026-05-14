@@ -6,6 +6,7 @@ const invoiceProductRepository = require("../repositories/invoiceProduct.reposit
 const productRepository = require("../repositories/product.repository");
 const axios = require("axios");
 const FormData = require("form-data");
+const ApiError = require("../utils/ApiError");
 
 //Invoice Service
 
@@ -41,6 +42,7 @@ const invoiceService = {
         //Find user by id.
         const user = await userRepository.getUserById(userId);
 
+        //Check if user details are complete
         if (
           [
             user?.email,
@@ -51,7 +53,10 @@ const invoiceService = {
             user?.addresses?.country,
           ].every((field) => field === undefined)
         ) {
-          return "User details are incomplete for invoice creation";
+          throw new ApiError(
+            400,
+            "User details are incomplete for invoice creation",
+          );
         }
 
         //Prepare user details for invoice
@@ -186,7 +191,7 @@ const invoiceService = {
         throw new Error("Cart is empty");
       }
     } catch (error) {
-      throw new Error("Failed to create invoice: " + error.message);
+      throw new ApiError(400, "Failed to create invoice: " + error.message);
     }
   },
 

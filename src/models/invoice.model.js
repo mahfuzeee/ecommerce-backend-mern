@@ -7,7 +7,7 @@ const invoiceSchema = new mongoose.Schema(
     payableAmount: { type: Number, required: true },
     cus_details: { type: Array, required: true },
     ship_details: { type: Array, required: true },
-    trans_id: { type: String, required: true, unique: true },
+    tran_id: { type: String, required: true, unique: true },
     val_id: { type: String, required: true },
     delivery_status: {
       type: String,
@@ -18,7 +18,7 @@ const invoiceSchema = new mongoose.Schema(
     payment_status: {
       type: String,
       required: true,
-      enum: ["pending", "paid", "completed", "cancelled"],
+      enum: ["pending", "paid", "failed", "cancelled"],
       default: "pending",
     },
 
