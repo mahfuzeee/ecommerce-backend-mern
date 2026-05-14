@@ -12,6 +12,11 @@ router.get(
   authVerificationUser,
   invoiceController.getSingleInvoiceByUser,
 );
+router.get(
+  "/invoice-product-list",
+  authVerificationUser,
+  invoiceController.getInvoiceProductList,
+);
 router.get("/:id", authVerificationUser, invoiceController.getInvoiceById);
 router.put("/:id", authVerificationUser, invoiceController.updateInvoice);
 router.delete("/:id", authVerificationUser, invoiceController.deleteInvoice);

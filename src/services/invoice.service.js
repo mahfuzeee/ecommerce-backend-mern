@@ -207,6 +207,14 @@ const invoiceService = {
   getSingleInvoiceByUser: async (invoiceId) => {
     return await invoiceRepository.getSingleInvoiceByUser(invoiceId);
   },
+
+  getInvoiceProductList: async (userId, page, limit) => {
+    return await invoiceProductRepository.getInvoiceProductList(
+      userId,
+      page,
+      limit,
+    );
+  },
   updateInvoice: async (invoiceId, updateData) => {
     return await invoiceRepository.updateInvoice(invoiceId, updateData);
   },

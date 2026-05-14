@@ -20,6 +20,39 @@ const invoiceProductRepository = {
     });
     return invoiceProduct;
   },
+
+  getInvoiceProductList: async (userId, page, limit) => {
+    const skip = (page - 1) * limit;
+
+    const matchStage = { $match: { user_id: new ObjectId(userId) } };
+    const sortStage = { createdAt: -1 };
+    const joinWithProductStage = {
+      $lookup: {
+        from: "products",
+        localField: "product_id",
+        foreignField: "_id",
+        as: "product",
+      },
+    };
+    const unwindProductStage = { $unwind: "$product" };
+    const facetStage = {
+      $facet: {
+        totalCount: [{ $count: "count" }],
+        data: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
+      },
+    };
+    const pipeline = [
+      matchStage,
+      joinWithProductStage,
+      unwindProductStage,
+      facetStage,
+    ];
+    const result = await InvoiceProduct.aggregate(pipeline);
+    if (result.length === 0) {
+      return [];
+    }
+    return result;
+  },
 };
 
 module.exports = invoiceProductRepository;

@@ -84,6 +84,29 @@ const invoiceController = {
       next(error);
     }
   },
+
+  //Retrieve all invoice Product list
+  getInvoiceProductList: async (req, res, next) => {
+    try {
+      const userId = req.headers._id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+
+      const invoiceProductList = await invoiceService.getInvoiceProductList(
+        userId,
+        page,
+        limit,
+      );
+      sendResponse(res, {
+        statusCode: 200,
+        message: "Invoice Product List retrieved successfully",
+        data: invoiceProductList,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   updateInvoice: async (req, res, next) => {
     try {
       const invoiceId = req.params.id;
