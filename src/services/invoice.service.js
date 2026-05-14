@@ -5,6 +5,7 @@ const userRepository = require("../repositories/user.repository");
 const invoiceProductRepository = require("../repositories/invoiceProduct.repository");
 const productRepository = require("../repositories/product.repository");
 const axios = require("axios");
+const FormData = require("form-data");
 
 //Invoice Service
 
@@ -14,16 +15,13 @@ const invoiceService = {
       //=========Step 1: Calculate total payable amount from cart items=========//
       const cartProducts = await cartRepository.getCart(userId);
 
-      console.log(`cartProducts: ${cartProducts[0].product.isDiscounted}`);
-
       let totalPayable = 0;
       if (cartProducts.length > 0) {
         let totalAmount = 0;
 
-        // Process each product in the cart
+        // Calculate total price for each product in the cart
         for (const item of cartProducts) {
           let price;
-          console.log(item?.product?.isDiscounted);
 
           if (item?.product?.isDiscounted === true) {
             price = parseFloat(item?.product?.discountPrice);
@@ -31,8 +29,6 @@ const invoiceService = {
             price = parseFloat(item?.product?.price);
           }
           totalAmount += price * parseInt(item?.quantity); // item.price * item.quantity;
-          // Example processing (replace with actual logic)
-          console.log(`Processing item: ${item?.product_name}`);
         }
 
         let vat = totalAmount * 0.15; // Example VAT calculation (15% of total amount)
@@ -42,6 +38,7 @@ const invoiceService = {
         console.log(`Total amount for invoice: ${totalAmount}`);
 
         //==========Step 2: Prepare customer and shipping details==========//
+        //Find user by id.
         const user = await userRepository.getUserById(userId);
 
         if (
@@ -52,9 +49,9 @@ const invoiceService = {
             user?.addresses?.address,
             user?.addresses?.city,
             user?.addresses?.country,
-          ].every((field) => field === null && field === undefined)
+          ].every((field) => field === undefined)
         ) {
-          throw new Error("User details are incomplete for invoice creation");
+          return "User details are incomplete for invoice creation";
         }
 
         //Prepare user details for invoice
@@ -117,10 +114,9 @@ const invoiceService = {
 
         //==========Step 6: Product Stock update==========//
         for (const item of cartProducts) {
-          await productRepository.updateProductStock(
-            item?.product_id,
-            item?.quantity,
-          );
+          const productId = (item?.product_id).toString();
+          const quantity = item?.quantity;
+          await productRepository.updateProductStock(productId, quantity);
         }
 
         //==========Step 7: Delete cart items==========//
@@ -198,10 +194,19 @@ const invoiceService = {
     return await invoiceRepository.getInvoiceById(invoiceId);
   },
 
-  getInvoicesByUser: async (userId) => {
-    return await invoiceRepository.getInvoicesByUser(userId);
+  getInvoicesByUser: async (userId, page, limit, skip) => {
+    const invoices = await invoiceRepository.getInvoicesByUser(
+      userId,
+      page,
+      limit,
+      skip,
+    );
+    return invoices;
   },
 
+  getSingleInvoiceByUser: async (invoiceId) => {
+    return await invoiceRepository.getSingleInvoiceByUser(invoiceId);
+  },
   updateInvoice: async (invoiceId, updateData) => {
     return await invoiceRepository.updateInvoice(invoiceId, updateData);
   },

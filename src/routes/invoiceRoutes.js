@@ -6,12 +6,13 @@ const router = express.Router();
 
 //Routes for invoice management by users
 router.post("/", authVerificationUser, invoiceController.createInvoice);
-router.get("/:id", authVerificationUser, invoiceController.getInvoiceById);
+router.get("/all", authVerificationUser, invoiceController.getInvoicesByUser);
 router.get(
-  "/user/:userId",
+  "/single/:invoice_id",
   authVerificationUser,
-  invoiceController.getInvoicesByUser,
+  invoiceController.getSingleInvoiceByUser,
 );
+router.get("/:id", authVerificationUser, invoiceController.getInvoiceById);
 router.put("/:id", authVerificationUser, invoiceController.updateInvoice);
 router.delete("/:id", authVerificationUser, invoiceController.deleteInvoice);
 

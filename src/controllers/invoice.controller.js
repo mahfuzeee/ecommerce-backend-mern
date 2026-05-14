@@ -38,10 +38,20 @@ const invoiceController = {
     }
   },
 
+  // Retrieve all invoices for a user
   getInvoicesByUser: async (req, res, next) => {
     try {
-      const userId = req.params.userId;
-      const invoices = await invoiceService.getInvoicesByUser(userId);
+      const userId = req.headers._id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const invoices = await invoiceService.getInvoicesByUser(
+        userId,
+        page,
+        limit,
+        skip,
+      );
       sendResponse(res, {
         statusCode: 200,
         message: "Invoices retrieved successfully",
@@ -52,6 +62,28 @@ const invoiceController = {
     }
   },
 
+  // Retrieve a single invoice for a user
+  getSingleInvoiceByUser: async (req, res, next) => {
+    try {
+      const invoiceId = req.params.invoice_id;
+
+      if (!invoiceId) {
+        throw new ApiError(404, "Invoice id is required");
+      }
+
+      const invoice = await invoiceService.getSingleInvoiceByUser(invoiceId);
+      if (!invoice) {
+        throw new ApiError(404, "Invoice not found");
+      }
+      sendResponse(res, {
+        statusCode: 200,
+        message: "Invoice retrieved successfully",
+        data: invoice,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
   updateInvoice: async (req, res, next) => {
     try {
       const invoiceId = req.params.id;

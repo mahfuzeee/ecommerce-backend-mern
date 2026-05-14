@@ -1,5 +1,6 @@
 const InvoiceProduct = require("../models/invoiceProduct.model");
 const mongoose = require("mongoose");
+const productRepository = require("./product.repository");
 
 const ObjectId = mongoose.Types.ObjectId;
 

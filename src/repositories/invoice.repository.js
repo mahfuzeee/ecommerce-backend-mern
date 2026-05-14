@@ -7,6 +7,7 @@ const objectId = mongoose.Types.ObjectId;
 //Invoice Repository
 
 const invoiceRepository = {
+  // Create a new invoice
   createInvoice: async (invoiceData) => {
     try {
       const invoice = await Invoice.create({
@@ -29,8 +30,47 @@ const invoiceRepository = {
     return await Invoice.findById(invoiceId).populate("user", "name email");
   },
 
-  getInvoicesByUser: async (userId) => {
-    return await Invoice.find({ user: userId }).populate("user", "name email");
+  // Retrieve all invoices from invoice Product for a user
+  getInvoicesByUser: async (userId, page, limit, skip) => {
+    const id = new objectId(userId);
+    const matchStage = { $match: { user_id: id } };
+    const sortStage = { createdAt: -1 };
+    const facetStage = {
+      $facet: {
+        totalCount: [{ $count: "count" }],
+        data: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
+      },
+    };
+    const pipeline = [matchStage, facetStage];
+    const result = await Invoice.aggregate(pipeline);
+    if (result.length === 0) {
+      return [];
+    }
+    return result;
+  },
+
+  // Retrieve a single invoice from invoice Product for a user
+  getSingleInvoiceByUser: async (invoiceId) => {
+    const invoice_id = new objectId(invoiceId);
+
+    const matchStage = { $match: { _id: invoice_id } };
+
+    const lookupStage = {
+      $lookup: {
+        from: "invoiceproducts",
+        localField: "_id",
+        foreignField: "invoice_id",
+        as: "invoiceProducts",
+      },
+    };
+
+    const unwindStage = { $unwind: "$invoiceProducts" };
+    const products = await Invoice.aggregate([
+      matchStage,
+      lookupStage,
+      unwindStage,
+    ]);
+    return products;
   },
 
   updateInvoice: async (invoiceId, updateData) => {
