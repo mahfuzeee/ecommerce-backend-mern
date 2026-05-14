@@ -8,16 +8,23 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, select: false }, // Hide by default
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
-    addresses: [
-      {
-        address: String,
-        street: String,
-        city: String,
-        state: String,
-        zipCode: String,
-        country: String,
-      },
-    ],
+    addresses: {
+      address: String,
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+      country: String,
+    },
+    phone: { type: String, required: true },
+    shippingAddress: {
+      address: String,
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+      country: String,
+    },
   },
   { timestamps: true, versionKey: false },
 );

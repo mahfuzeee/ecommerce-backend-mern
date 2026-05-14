@@ -142,6 +142,12 @@ const cartRepository = {
     const _id = new objectId(cartId);
     return await Cart.deleteOne({ _id });
   },
+
+  //Delete all cart items for a user
+  deleteCartsByUser: async (userId) => {
+    const user_id = new objectId(userId);
+    return await Cart.deleteMany({ user_id });
+  },
 };
 
 module.exports = cartRepository;

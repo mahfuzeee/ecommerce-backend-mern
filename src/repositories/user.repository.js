@@ -1,6 +1,8 @@
 const User = require("../models/user.model");
 const ApiError = require("../utils/ApiError");
+const objectId = require("mongoose").Types.ObjectId;
 
+//User Repository
 const userRepository = {
   // Create a new user
   createUser: async (user) => {
@@ -31,6 +33,11 @@ const userRepository = {
   //get an user by email.
   getUserByEmail: async (email) => {
     return await User.findOne({ email }).select("+password");
+  },
+
+  getUserById: async (userId) => {
+    const id = new objectId(userId);
+    return await User.findById(id);
   },
 
   //updata user data: name, password, etc.

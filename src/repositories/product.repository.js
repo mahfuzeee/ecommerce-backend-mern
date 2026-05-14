@@ -1,5 +1,6 @@
 const Product = require("../models/product.model");
 const logger = require("../utils/logger");
+const objectId = require("mongoose").Types.ObjectId;
 
 const productRepository = {
   createProduct: async (product) => {
@@ -17,6 +18,12 @@ const productRepository = {
       new: true,
       runValidators: true,
     });
+  },
+
+  //Update stock quantity of a product
+  updateProductStock: async (id, quantity) => {
+    const _id = new objectId(id);
+    return await Product.findByIdAndUpdate(_id, { $inc: { stock: -quantity } });
   },
   deleteProduct: async (id) => {
     return await Product.findByIdAndDelete(id);

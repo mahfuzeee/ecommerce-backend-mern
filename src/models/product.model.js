@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema(
     color: { type: String, trim: true },
     size: { type: String, trim: true },
     discountPrice: Number,
-
+    isDiscounted: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     sku: { type: String, unique: true },
     images: [{ type: String }], // Array of image URLs

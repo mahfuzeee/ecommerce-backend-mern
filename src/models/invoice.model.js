@@ -2,25 +2,30 @@ const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
-    totalAmount: Number,
-    status: {
+    payableAmount: { type: Number, required: true },
+    cus_details: { type: Array, required: true },
+    ship_details: { type: Array, required: true },
+    trans_id: { type: String, required: true, unique: true },
+    val_id: { type: String, required: true },
+    delivery_status: {
       type: String,
-      enum: ["pending", "paid", "shipped", "completed", "cancelled"],
+      required: true,
+      enum: ["pending", "shipped", "delivered"],
+      default: "pending",
+    },
+    payment_status: {
+      type: String,
+      required: true,
+      enum: ["pending", "paid", "completed", "cancelled"],
       default: "pending",
     },
 
-    paymentMethod: String,
-
-    shippingAddress: {
-      street: String,
-      city: String,
-      postalCode: String,
-      country: String,
-    },
+    vat: { type: Number, required: true },
+    totalAmount: { type: Number, required: true },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 const Invoice = mongoose.model("Invoice", invoiceSchema);

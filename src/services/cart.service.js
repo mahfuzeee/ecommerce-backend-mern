@@ -81,7 +81,7 @@ const cartService = {
           product_name,
           color,
           size,
-          price,
+          price: product.price,
           quantity,
         };
         return await cartRepository.createCart(newCartData);

@@ -1,19 +1,37 @@
 const mongoose = require("mongoose");
+const { required } = require("zod/mini");
 
-const invoiceProductSchema = new mongoose.Schema({
-  invoice: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Invoice",
+const invoiceProductSchema = new mongoose.Schema(
+  {
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    product_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+
+    invoice_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Invoice",
+      required: true,
+    },
+
+    product_name: {
+      type: String,
+      required: true,
+    },
+
+    quantity: { type: Number, required: true },
+    price: { type: Number, required: true }, // snapshot price
+    color: { type: String, required: true },
+    size: { type: String, required: true },
   },
-
-  product: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
-  },
-
-  quantity: Number,
-  price: Number, // snapshot price
-});
+  { timestamps: true, versionKey: false },
+);
 
 const InvoiceProduct = mongoose.model("InvoiceProduct", invoiceProductSchema);
 
