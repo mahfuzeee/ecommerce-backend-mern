@@ -11,7 +11,7 @@ const paymentService = {
     return await invoiceRepository.updateInvoice(transactionId, "failed");
   },
   paymentIpn: async (transactionId) => {
-    return await paymentRepository.paymentIpn(transactionId);
+    return "Here you can do aything you want";
   },
 };
 

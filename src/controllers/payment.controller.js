@@ -29,6 +29,8 @@ const paymentController = {
     const transactionId = req.params.trx_id;
     try {
       const payment = await paymentService.paymentFail(transactionId);
+      //Sent email, or invoice or something
+
       sendResponse(res, {
         statusCode: 200,
         message: "Payment failed",
