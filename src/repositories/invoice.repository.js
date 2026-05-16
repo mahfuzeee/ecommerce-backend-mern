@@ -88,6 +88,80 @@ const invoiceRepository = {
   deleteInvoice: async (invoiceId) => {
     return await Invoice.findByIdAndDelete(invoiceId);
   },
+
+  //Get all invoices list
+  getAllOrders: async (page, limit, fromDate, toDate) => {
+    const skip = (page - 1) * limit;
+
+    const matchStage = {
+      $match: {
+        createdAt: {
+          $gte: fromDate,
+          $lte: toDate,
+        },
+      },
+    };
+
+    const joinWithProductStage = {
+      $lookup: {
+        from: "invoiceproducts",
+        localField: "_id",
+        foreignField: "invoice_id",
+        as: "invoiceProducts",
+      },
+    };
+
+    const unwindProductStage = { $unwind: "$invoiceProducts" };
+    const projectionStage = {
+      $project: {
+        totalCount: 1,
+        data: {
+          _id: 1,
+          user_id: 1,
+          payableAmount: 1,
+          cus_details: 1,
+          ship_details: 1,
+          tran_id: 1,
+          val_id: 1,
+          delivery_status: 1,
+          payment_status: 1,
+          vat: 1,
+          totalAmount: 1,
+          createdAt: 1,
+          invoiceProducts: {
+            product_id: 1,
+            product_name: 1,
+            quantity: 1,
+            price: 1,
+            color: 1,
+            size: 1,
+          },
+        },
+      },
+    };
+    const facetStage = {
+      $facet: {
+        totalCount: [{ $count: "count" }],
+        data: [
+          { $sort: { createdAt: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+        ],
+      },
+    };
+    const pipeline = [
+      matchStage,
+      joinWithProductStage,
+      unwindProductStage,
+      facetStage,
+      projectionStage,
+    ];
+    const result = await Invoice.aggregate(pipeline);
+    if (result.length === 0) {
+      return [];
+    }
+    return result;
+  },
 };
 
 module.exports = invoiceRepository;

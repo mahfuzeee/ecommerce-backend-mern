@@ -8,6 +8,7 @@ const reviewRoutes = require("./reviewRoutes");
 const cartRoutes = require("./cartRoutes");
 const invoiceRoutes = require("./invoiceRoutes");
 const paymentRoutes = require("./paymentRoutes");
+const orderRoutes = require("./orderRoutes");
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use("/reviews", reviewRoutes);
 router.use("/cart", cartRoutes);
 router.use("/invoices", invoiceRoutes);
 router.use("/payment", paymentRoutes);
+router.use("/orders", orderRoutes);
 
 module.exports = router;
