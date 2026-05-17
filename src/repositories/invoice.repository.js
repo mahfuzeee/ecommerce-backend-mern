@@ -27,7 +27,7 @@ const invoiceRepository = {
   },
 
   getInvoiceById: async (invoiceId) => {
-    return await Invoice.findById(invoiceId).populate("user", "name email");
+    return await Invoice.findById(invoiceId);
   },
 
   // Retrieve all invoices from invoice Product for a user
@@ -161,6 +161,20 @@ const invoiceRepository = {
       return [];
     }
     return result;
+  },
+
+  //update oreders delivery status
+  updateOrder: async (id, user_id, delivery_status) => {
+    return await Invoice.updateOne(
+      {
+        _id: new objectId(id),
+        user_id: new objectId(user_id),
+      },
+      {
+        delivery_status: delivery_status,
+      },
+      { new: true },
+    );
   },
 };
 

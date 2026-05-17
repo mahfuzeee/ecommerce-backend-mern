@@ -12,7 +12,7 @@ const invoiceSchema = new mongoose.Schema(
     delivery_status: {
       type: String,
       required: true,
-      enum: ["pending", "shipped", "delivered"],
+      enum: ["pending", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
     payment_status: {

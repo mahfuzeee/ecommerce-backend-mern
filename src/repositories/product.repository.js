@@ -27,6 +27,14 @@ const productRepository = {
       $inc: { stock: -parseInt(quantity) },
     });
   },
+
+  //Restore stock quantity of a product
+  restoreProductStock: async (id, quantity) => {
+    const _id = new objectId(id);
+    return await Product.findByIdAndUpdate(_id, {
+      $inc: { stock: parseInt(quantity) },
+    });
+  },
   deleteProduct: async (id) => {
     return await Product.findByIdAndDelete(id);
   },

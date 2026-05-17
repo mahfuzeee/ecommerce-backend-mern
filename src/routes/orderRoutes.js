@@ -4,5 +4,6 @@ const authVerificationAdmin = require("../middlewares/authVerificationAdmin");
 const router = express.Router();
 
 router.get("/", authVerificationAdmin, orderController.getAllOrders);
+router.put("/update", authVerificationAdmin, orderController.updateOrder);
 
 module.exports = router;

@@ -53,6 +53,11 @@ const invoiceProductRepository = {
     }
     return result;
   },
+
+  //Get invoice products by invoice id
+  getInvoiceProductsByInvoiceId: async (invoiceId) => {
+    return await InvoiceProduct.find({ invoice_id: new ObjectId(invoiceId) });
+  },
 };
 
 module.exports = invoiceProductRepository;

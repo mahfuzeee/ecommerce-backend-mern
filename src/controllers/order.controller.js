@@ -29,6 +29,31 @@ const orderController = {
       return next(error);
     }
   },
+
+  //Update delivery status of an order
+  updateOrder: async (req, res, next) => {
+    try {
+      const { _id, user_id, delivery_status } = req.body;
+      if (!_id || !user_id || !delivery_status) {
+        return sendResponse(res, {
+          success: false,
+          statusCode: 400,
+          message: "Missing required fields",
+        });
+      }
+      const updatedOrder = await orderService.updateOrder(
+        _id,
+        user_id,
+        delivery_status,
+      );
+      return sendResponse(res, {
+        message: "Order updated successfully",
+        data: updatedOrder,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
 };
 
 module.exports = orderController;
