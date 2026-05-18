@@ -1,6 +1,8 @@
 const invoiceRepository = require("../repositories/invoice.repository");
 const invoiceProductRepository = require("../repositories/invoiceProduct.repository");
 const productRepositoty = require("../repositories/product.repository");
+const { Parser } = require("@json2csv/plainjs");
+
 const ApiError = require("../utils/ApiError");
 
 const orderService = {
@@ -84,6 +86,33 @@ const orderService = {
         "Payment not successfull. Cannot update delivery status",
       );
     }
+  },
+
+  //Export all orders to csv
+  exportCSV: async (fromDate, toDate) => {
+    const orders = await invoiceRepository.getAllOrders(
+      1,
+      10000,
+      fromDate,
+      toDate,
+    );
+    // Select columns for CSV
+    const fields = [
+      "_id",
+      "user_id",
+      "payableAmount",
+      "delivery_status",
+      "payment_status",
+      "totalAmount",
+      "vat",
+      "createdAt",
+    ];
+
+    // Convert to CSV
+    const parser = new Parser({ fields });
+
+    const csv = parser.parse(orders[0].data);
+    return csv;
   },
 };
 

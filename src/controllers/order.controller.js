@@ -54,6 +54,27 @@ const orderController = {
       return next(error);
     }
   },
+
+  //Get all orders as csv file
+  getAllOrdersAsCsv: async (req, res, next) => {
+    try {
+      const { from, to } = req.query;
+
+      const fromDate = from
+        ? new Date(`${from}T00:00:00`)
+        : new Date("2000-01-01T00:00:00");
+
+      const toDate = to ? new Date(`${to}T23:59:59.999`) : new Date();
+
+      const ordersCSV = await orderService.exportCSV(fromDate, toDate);
+
+      res.header("Content-Type", "text/csv");
+      res.attachment("orders.csv");
+      return res.send(ordersCSV);
+    } catch (error) {
+      return next(error);
+    }
+  },
 };
 
 module.exports = orderController;

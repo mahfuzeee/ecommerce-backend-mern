@@ -5,5 +5,10 @@ const router = express.Router();
 
 router.get("/", authVerificationAdmin, orderController.getAllOrders);
 router.put("/update", authVerificationAdmin, orderController.updateOrder);
+router.get(
+  "/export-csv",
+  authVerificationAdmin,
+  orderController.getAllOrdersAsCsv,
+);
 
 module.exports = router;
