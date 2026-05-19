@@ -176,6 +176,31 @@ const invoiceRepository = {
       { new: true },
     );
   },
+
+  //Count Invoices
+  count: async (status) => {
+    if (status) {
+      return await Invoice.countDocuments({ delivery_status: status });
+    }
+    return await Invoice.countDocuments();
+  },
+
+  //Calculate total amount for successful payment
+  totalAmount: async () => {
+    return await Invoice.aggregate([
+      {
+        $match: {
+          payment_status: "paid",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$totalAmount" },
+        },
+      },
+    ]);
+  },
 };
 
 module.exports = invoiceRepository;

@@ -10,6 +10,7 @@ const invoiceRoutes = require("./invoiceRoutes");
 const paymentRoutes = require("./paymentRoutes");
 const orderRoutes = require("./orderRoutes");
 const fileRoutes = require("./fileRoutes");
+const dashboardRoutes = require("./dashboardRoutes");
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ router.use("/invoices", invoiceRoutes);
 router.use("/payment", paymentRoutes);
 router.use("/orders", orderRoutes);
 router.use("/files", fileRoutes);
+router.use("/dashboard", dashboardRoutes);
 router.use("/get-file", express.static("uploads"));
 
 module.exports = router;

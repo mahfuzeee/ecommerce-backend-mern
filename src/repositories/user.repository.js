@@ -49,6 +49,11 @@ const userRepository = {
   deleteUser: async (id) => {
     return await User.findByIdAndDelete(id);
   },
+
+  //Count users
+  count: async () => {
+    return await User.countDocuments();
+  },
 };
 
 module.exports = userRepository;

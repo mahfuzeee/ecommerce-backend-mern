@@ -95,6 +95,11 @@ const productRepository = {
     const products = await productQuery;
     return products;
   },
+
+  //Count Products
+  count: async () => {
+    return await Product.countDocuments();
+  },
 };
 
 module.exports = productRepository;

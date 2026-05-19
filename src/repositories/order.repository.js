@@ -16,6 +16,11 @@ const orderRepository = {
   deleteOrder: async (id) => {
     return await Order.findByIdAndDelete(id);
   },
+
+  //Count orders
+  count: async () => {
+    return await Order.countDocuments();
+  },
 };
 
 module.exports = orderRepository;

@@ -25,6 +25,11 @@ const categoryRepository = {
   getCategoriesByParent: async (parentId) => {
     return await Category.find({ parent: parentId });
   },
+
+  //Count Categories
+  count: async () => {
+    return await Category.countDocuments();
+  },
 };
 
 module.exports = categoryRepository;

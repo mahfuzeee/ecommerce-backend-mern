@@ -21,6 +21,11 @@ const brandRepository = {
   deleteBrand: async (id) => {
     return await Brand.findByIdAndDelete(id);
   },
+
+  //Count Brands
+  count: async () => {
+    return await Brand.countDocuments();
+  },
 };
 
 module.exports = brandRepository;

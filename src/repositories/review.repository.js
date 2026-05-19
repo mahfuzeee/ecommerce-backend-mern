@@ -154,6 +154,11 @@ const reviewRepository = {
   delete: async (id) => {
     return await Review.findByIdAndDelete(id);
   },
+
+  //Count Reviews
+  count: async () => {
+    return await Review.countDocuments();
+  },
 };
 
 module.exports = reviewRepository;
