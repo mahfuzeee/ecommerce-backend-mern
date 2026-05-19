@@ -2,17 +2,12 @@ const mongoose = require("mongoose");
 
 const fileSchema = new mongoose.Schema(
   {
-    filename: String,
+    fileName: { type: String, required: true }, // original filename from upload
     url: String,
     mimetype: String,
     size: Number,
-
-    uploadedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 const File = mongoose.model("File", fileSchema);
