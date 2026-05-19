@@ -2,6 +2,7 @@ const fs = require("fs");
 const fileService = require("../services/file.service");
 const sendResponse = require("../utils/apiResponse");
 const path = require("path");
+const apiError = require("../utils/ApiError");
 
 const fileController = {
   // Upload a file
@@ -54,6 +55,10 @@ const fileController = {
     try {
       const id = req.body?._id;
       const filename = req.body?.filename;
+
+      if (!id || !filename) {
+        throw new ApiError(400, "File id and filename are required");
+      }
 
       const filePath = path.join(__dirname, `../../uploads/${filename}`);
       fs.unlink(filePath, (err) => {

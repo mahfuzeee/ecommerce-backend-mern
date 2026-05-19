@@ -24,5 +24,6 @@ router.use("/invoices", invoiceRoutes);
 router.use("/payment", paymentRoutes);
 router.use("/orders", orderRoutes);
 router.use("/files", fileRoutes);
+router.use("/get-file", express.static("uploads"));
 
 module.exports = router;

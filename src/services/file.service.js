@@ -1,5 +1,7 @@
 const fileRepository = require("../repositories/file.repository");
+const ApiError = require("../utils/ApiError");
 
+//File Service
 const fileService = {
   uploadFile: async (file) => {
     return await fileRepository.uploadFile(file);
@@ -12,6 +14,10 @@ const fileService = {
 
   //Delete a file
   deleteFile: async (id) => {
+    const file = await fileRepository.getFileById(id);
+    if (!file) {
+      throw new ApiError(404, "File not found");
+    }
     return await fileRepository.deleteFile(id);
   },
 };

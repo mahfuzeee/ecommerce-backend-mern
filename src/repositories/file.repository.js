@@ -1,3 +1,4 @@
+const { getFileById } = require("../controllers/file.controller");
 const File = require("../models/file.model");
 
 const fileRepository = {
@@ -28,6 +29,11 @@ const fileRepository = {
       return [];
     }
     return result;
+  },
+
+  //Get a file by Id
+  getFileById: async (id) => {
+    return await File.findById(id);
   },
 
   //Delete a file

@@ -1,4 +1,4 @@
-const exress = require("express");
+const express = require("express");
 const cors = require("cors");
 const routes = require("./routes/index");
 const pinoHttp = require("pino-http");
@@ -7,12 +7,12 @@ const notFound = require("./middlewares/notFound");
 const logger = require("./utils/logger");
 const cookieParser = require("cookie-parser");
 
-const app = exress();
+const app = express();
 
 app.use(cors());
 app.use(pinoHttp({ logger }));
-app.use(exress.json());
-app.use(exress.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/health", (_req, res) => {
