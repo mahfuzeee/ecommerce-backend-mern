@@ -29,6 +29,11 @@ const fileRepository = {
     }
     return result;
   },
+
+  //Delete a file
+  deleteFile: async (id) => {
+    return await File.findByIdAndDelete(id);
+  },
 };
 
 module.exports = fileRepository;

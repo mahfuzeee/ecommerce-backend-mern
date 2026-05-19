@@ -9,6 +9,11 @@ const fileService = {
   getAllFiles: async (page, limit) => {
     return await fileRepository.getAllFiles(page, limit);
   },
+
+  //Delete a file
+  deleteFile: async (id) => {
+    return await fileRepository.deleteFile(id);
+  },
 };
 
 module.exports = fileService;

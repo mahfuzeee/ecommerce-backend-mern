@@ -14,4 +14,6 @@ router.post(
 
 router.get("/all", fileController.getAllFiles);
 
+router.post("/delete", authVerificationAdmin, fileController.deleteFile);
+
 module.exports = router;
