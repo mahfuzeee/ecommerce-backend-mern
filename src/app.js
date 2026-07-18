@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const routes = require("./routes/index");
@@ -9,7 +10,16 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3001",
+      process.env.CLIENT_URL,
+      process.env.ADMIN_URL,
+    ],
+    credentials: true,
+  }),
+);
 app.use(pinoHttp({ logger }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
