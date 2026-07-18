@@ -6,8 +6,8 @@ const brandService = {
     return await brandRepository.createBrand(brand);
   },
 
-  getAllBrands: async () => {
-    return await brandRepository.getAllBrands();
+  getAllBrands: async (page, limit) => {
+    return await brandRepository.getAllBrands(page, limit);
   },
 
   getBrandById: async (id) => {

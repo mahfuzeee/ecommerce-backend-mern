@@ -15,10 +15,12 @@ const categoryController = {
     }
   },
 
-  //Get all categories
+  //Get all categories with pagination
   getAllCategories: async (req, res, next) => {
     try {
-      const categories = await categoryService.getAllCategories();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const categories = await categoryService.getAllCategories(page, limit);
       return sendResponse(res, {
         message: "Categories retrieved successfully",
         data: categories,

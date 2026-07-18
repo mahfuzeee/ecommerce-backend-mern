@@ -6,8 +6,27 @@ const categoryRepository = {
     return await Category.create(category);
   },
 
-  getAllCategories: async () => {
-    return await Category.find().sort({ name: 1 });
+  //Get all categories with pagination
+  getAllCategories: async (page, limit) => {
+    const skip = (page - 1) * limit;
+    const sortStage = { createdAt: -1 };
+    const facetStage = {
+      $facet: {
+        totalCount: [{ $count: "count" }],
+        categories: [
+          { $sort: sortStage },
+          { $skip: skip },
+          { $limit: limit },
+          { $project: { updatedAt: 0 } },
+        ],
+      },
+    };
+    const pipeline = [facetStage];
+    const result = await Category.aggregate(pipeline);
+    if (result.length === 0) {
+      return [];
+    }
+    return result;
   },
 
   getCategoryById: async (id) => {

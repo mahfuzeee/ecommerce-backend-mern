@@ -15,10 +15,13 @@ const brandController = {
     }
   },
 
-  //Get all brands
+  //Get all brands with pagination
   getAllBrands: async (req, res, next) => {
     try {
-      const brands = await brandService.getAllBrands();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+
+      const brands = await brandService.getAllBrands(page, limit);
       return sendResponse(res, {
         message: "Brands retrieved successfully",
         data: brands,

@@ -8,8 +8,9 @@ const categoryService = {
     return await categoryRepository.createCategory(category);
   },
 
-  getAllCategories: async () => {
-    return await categoryRepository.getAllCategories();
+  //Get all categories with pagination
+  getAllCategories: async (page, limit) => {
+    return await categoryRepository.getAllCategories(page, limit);
   },
 
   getCategoryById: async (id) => {

@@ -6,8 +6,29 @@ const brandRepository = {
     return await Brand.create(brand);
   },
 
-  getAllBrands: async () => {
-    return await Brand.find().sort({ name: 1 });
+  ///Get all brands with pagination
+  getAllBrands: async (page, limit) => {
+    const skip = (page - 1) * limit;
+
+    const sortStage = { createdAt: -1 };
+
+    const facetStage = {
+      $facet: {
+        totalCount: [{ $count: "count" }],
+        brands: [
+          { $sort: sortStage },
+          { $skip: skip },
+          { $limit: limit },
+          { $project: { updatedAt: 0 } },
+        ],
+      },
+    };
+    const pipeline = [facetStage];
+    const result = await Brand.aggregate(pipeline);
+    if (result.length === 0) {
+      return [];
+    }
+    return result;
   },
 
   getBrandById: async (id) => {
