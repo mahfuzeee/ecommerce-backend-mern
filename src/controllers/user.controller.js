@@ -43,6 +43,17 @@ const userController = {
     }
   },
 
+  //Verify user
+  verifyUser: async (req, res, next) => {
+    try {
+      sendResponse(res, {
+        message: "User verified",
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
   //logout user
   logoutUser: async (req, res, next) => {
     try {

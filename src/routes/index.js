@@ -10,7 +10,7 @@ const invoiceRoutes = require("./invoiceRoutes");
 const paymentRoutes = require("./paymentRoutes");
 const orderRoutes = require("./orderRoutes");
 const fileRoutes = require("./fileRoutes");
-const dashboardRoutes = require("./dashboardRoutes");
+const dashboardRoutes = require("./dashboardRoutes.js");
 
 const router = express.Router();
 
