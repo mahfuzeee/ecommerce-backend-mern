@@ -1,135 +1,258 @@
-# ecommerce-backend-mern
+# E-commerce Backend (MERN)
 
-A backend API for an e-commerce platform built with Node.js, Express, MongoDB, and Mongoose.
+This repository contains a Node.js and Express-based backend for an e-commerce platform. It includes authentication for users and admins, product catalog management, cart and review workflows, invoice handling, dashboard metrics, file uploads, and payment callback support.
 
-## Key Features
+## Overview
 
-- JWT-based authentication for users and admins
-- Product CRUD operations with search and filtering support
-- Brand and category management protected by admin authorization
-- Health check endpoint and central middleware handling
-- Structured API versioning under `/api/v1`
+The application is organized around a modular REST API structure with separate layers for routes, controllers, services, repositories, models, and middleware. All API routes are mounted under `/api/v1`, and the server exposes a health check endpoint at `/health`.
 
 ## Tech Stack
 
 - Node.js
-- Express
-- MongoDB / Mongoose
-- JSON Web Tokens (`jsonwebtoken`)
+- Express.js
+- MongoDB with Mongoose
+- JWT authentication
 - Zod validation
-- Pino logging
-- Cookie parsing and CORS support
+- Multer for file uploads
+- Pino for structured logging
+- Cookie parsing and CORS
+- Faker-based seed data generation
 
-## Getting Started
+## Project Structure
 
-### Install dependencies
+```text
+src/
+  app.js                # Express app setup and middleware
+  server.js             # Server bootstrap and DB connection
+  config/               # DB and payment configuration
+  controllers/          # Request handlers
+  services/             # Business logic
+  repositories/         # Database access layer
+  models/               # Mongoose schemas/models
+  routes/               # API route definitions
+  middlewares/          # Auth, validation, error handling, uploads
+  utils/                # Helpers, error objects, logger, token helpers
+uploads/                # Uploaded files are stored here
+seed.js                 # Database seeding script
+```
+
+## Features
+
+- User and admin registration/login/logout
+- Protected authentication using cookies and JWT
+- Product, brand, and category CRUD operations
+- Cart management for authenticated users
+- Product review creation and management
+- Invoice and order-related APIs
+- Admin dashboard summary endpoint
+- File upload and file listing/deletion support
+- Payment callback routes for transaction handling
+- Seed script to populate categories, brands, and products
+
+## Prerequisites
+
+- Node.js and npm installed
+- A running MongoDB instance
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### Environment variables
+3. Create a local environment file
 
-Copy `example.env` to `.env` and set the required values:
+```bash
+cp example.env .env
+```
 
-- `PORT` - app port (default: `3000`)
-- `MONGO_URI_LOCAL` - MongoDB connection string
-- `LOG_LEVEL` - logger level
-- `NODE_ENV` - runtime environment
-- `JWT_SECRET` - secret key for JWT signing
-- `Jwt_expires_in` - JWT expiration time
-- `COOKIE_EXPIRE` - cookie expiration time
+## Environment Variables
 
-### Start the server
+Set the following values in your `.env` file:
+
+```env
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/ecommerce
+MONGO_URI_LOCAL=mongodb://localhost:27017/ecommerce
+LOG_LEVEL=info
+NODE_ENV=development
+JWT_SECRET=your_jwt_secret
+Jwt_expires_in=7d
+COOKIE_EXPIRE=7d
+
+# Optional payment integration values
+SSLCZ_STORE_ID=
+SSLCZ_STORE_PASSWD=
+SSLCZ_CURRENCY=
+SSLCZ_SUCCESS_URL=
+SSLCZ_FAIL_URL=
+SSLCZ_CANCEL_URL=
+SSLCZ_IPN_URL=
+SSLCZ_INIT_URL=
+```
+
+Notes:
+
+- The main application uses `MONGO_URI` for database connection.
+- The seed script uses `MONGO_URI_LOCAL`.
+- `JWT_SECRET` should be a long, secure random string.
+
+## Running the Server
+
+### Development mode
 
 ```bash
 npm run dev
 ```
 
-or
+### Production mode
 
 ```bash
 npm start
 ```
 
-## Server Entry Points
+The server will start on the port defined by `PORT` (default: `3000`).
 
-- `src/server.js` - application launcher and database connection
-- `src/app.js` - Express app configuration and middleware
+## Seeding Sample Data
+
+To populate the database with sample categories, brands, and products:
+
+```bash
+node seed.js
+```
 
 ## API Base URL
 
-All application routes are mounted under:
+All routes are mounted under:
 
-```
+```text
 /api/v1
 ```
 
-The health endpoint is available at:
+Health check:
 
-```
-/health
+```text
+GET /health
 ```
 
 ## Route Overview
 
-### User Routes (`/api/v1/user`)
+### Authentication
 
-- `POST /register` — register a new user
-- `POST /login` — login existing user
-- `GET /` — get authenticated user info
-- `GET /logout` — logout user
-- `PUT /update` — update user profile
-- `DELETE /delete` — delete user account
+#### User routes
 
-### Admin Routes (`/api/v1/admin`)
+```text
+POST /api/v1/user/register
+POST /api/v1/user/login
+GET  /api/v1/user/
+GET  /api/v1/user/verify
+GET  /api/v1/user/logout
+PUT  /api/v1/user/update
+DELETE /api/v1/user/delete
+```
 
-- `POST /register` — register a new admin
-- `POST /login` — admin login
-- `GET /` — get authenticated admin info
-- `GET /verify` — verify admin token
-- `GET /logout` — logout admin
-- `PUT /update` — update admin profile
+#### Admin routes
 
-### Product Routes (`/api/v1/products`)
+```text
+POST /api/v1/admin/register
+POST /api/v1/admin/login
+GET  /api/v1/admin/
+GET  /api/v1/admin/verify
+GET  /api/v1/admin/logout
+PUT  /api/v1/admin/update
+```
 
-- `GET /` — list all products
-- `POST /` — create a new product
-- `GET /search` — search products
-- `GET /filter` — filter products by category, brand, price, and sort. Also pgination.
-- `GET /:id` — get product by ID
-- `PUT /:id` — update product by ID
-- `DELETE /:id` — delete product by ID
+### Catalog
 
-### Brand Routes (`/api/v1/brands`)
+```text
+GET    /api/v1/products
+POST   /api/v1/products
+GET    /api/v1/products/:id
+PUT    /api/v1/products/:id
+DELETE /api/v1/products/:id
 
-- `POST /create` — create a new brand (admin only)
-- `GET /` — list all brands
-- `GET /:id` — get brand by ID
-- `PUT /:id` — update brand by ID (admin only)
-- `DELETE /:id` — delete brand by ID (admin only)
+GET  /api/v1/brands
+POST /api/v1/brands/create
+GET  /api/v1/brands/:id
+PUT  /api/v1/brands/:id
+DELETE /api/v1/brands/:id
 
-### Category Routes (`/api/v1/categories`)
+GET  /api/v1/categories
+POST /api/v1/categories/create
+GET  /api/v1/categories/:id
+PUT  /api/v1/categories/:id
+DELETE /api/v1/categories/:id
+```
 
-- `POST /create` — create a new category (admin only)
-- `GET /` — list all categories
-- `GET /:id` — get category by ID
-- `PUT /:id` — update category by ID (admin only)
-- `DELETE /:id` — delete category by ID (admin only)
+### User Features
 
-## Middleware and Utilities
+```text
+POST /api/v1/cart
+GET  /api/v1/cart
+PUT  /api/v1/cart/update/:cart_id
+DELETE /api/v1/cart/delete/:cart_id
 
-- `src/middlewares/authVerificationUser.js` — protects user routes
-- `src/middlewares/authVerificationAdmin.js` — protects admin routes
-- `src/middlewares/errorHandler.js` — catches and formats errors
-- `src/middlewares/notFound.js` — handles unmatched routes
-- `src/utils/ApiError.js` — custom API error helper
-- `src/utils/apiResponse.js` — response formatting helper
+POST /api/v1/reviews
+GET  /api/v1/reviews/all
+GET  /api/v1/reviews/product/:productId
+GET  /api/v1/reviews/user/:userId
+PUT  /api/v1/reviews/:id
+DELETE /api/v1/reviews/:id
+
+POST /api/v1/invoices
+GET  /api/v1/invoices/all
+GET  /api/v1/invoices/single/:invoice_id
+GET  /api/v1/invoices/invoice-product-list
+GET  /api/v1/invoices/:id
+PUT  /api/v1/invoices/:id
+DELETE /api/v1/invoices/:id
+```
+
+### Admin and Business Operations
+
+```text
+GET /api/v1/orders
+PUT /api/v1/orders/update
+GET /api/v1/orders/export-csv
+
+GET /api/v1/dashboard
+
+POST /api/v1/files/upload
+GET  /api/v1/files/all
+POST /api/v1/files/delete
+```
+
+### Payment Callback Routes
+
+```text
+POST /api/v1/payment/success/:trx_id
+POST /api/v1/payment/cancel/:trx_id
+POST /api/v1/payment/fail/:trx_id
+POST /api/v1/payment/ipn/:trx_id
+```
+
+## Authentication Behavior
+
+- User authentication uses the `u_token` cookie.
+- Admin authentication uses the `a_token` cookie.
+- Protected routes are enforced by the auth middleware in the `src/middlewares` directory.
+
+## File Uploads
+
+Uploaded files are stored under the `uploads/` directory and can be served through the static route:
+
+```text
+/api/v1/get-file/filename
+```
 
 ## Notes
 
-- `src/routes/orderRoutes.js` exists but is currently empty and not mounted into the main route tree.
-- If order management is required, add route registration in `src/routes/index.js` and implement order controller logic.
+- The project currently exposes a basic product CRUD API. Search and filter endpoints are not active in the current route setup.
+- The application includes centralized error handling and a not-found middleware.
+- Automated test coverage is not configured in the current package setup.
 
 ## Example Request
 

@@ -23,10 +23,10 @@ const categoryRepository = {
     };
     const pipeline = [facetStage];
     const result = await Category.aggregate(pipeline);
-    if (result.length === 0) {
-      return [];
-    }
-    return result;
+    const totalCategories = result[0]?.totalCount[0]?.count || 0;
+    const categories = result[0]?.categories || [];
+
+    return { categories, totalCategories };
   },
 
   getCategoryById: async (id) => {

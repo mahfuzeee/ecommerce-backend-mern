@@ -2,8 +2,8 @@ const productRepository = require("../repositories/product.repository");
 const ApiError = require("../utils/ApiError");
 
 const productService = {
-  getAllProducts: async () => {
-    return await productRepository.getAllProducts();
+  getAllProducts: async (query) => {
+    return await productRepository.getAllProducts(query);
   },
   getProductById: async (id) => {
     const product = await productRepository.getProductById(id);

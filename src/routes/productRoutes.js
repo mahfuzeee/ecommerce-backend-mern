@@ -9,9 +9,11 @@ router
   .get(productController.getAllProducts)
   .post(productController.createProduct);
 
+/*
 //Additional routes for product filtering and searching
 router.get("/search", productController.searchProducts);
 router.get("/filter", productController.filterProducts);
+*/
 
 router
   .route("/:id")

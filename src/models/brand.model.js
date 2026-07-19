@@ -6,7 +6,7 @@ const brandSchema = new mongoose.Schema(
     logo: String,
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 const Brand = mongoose.model("Brand", brandSchema);

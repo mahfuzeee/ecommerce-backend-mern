@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const logger = require("../utils/logger");
 
 const connectDB = async () => {
-  const mongoURI = process.env.MONGO_URI_LOCAL;
+  const mongoURI = process.env.MONGO_URI;
   try {
     await mongoose.connect(mongoURI);
     logger.info(`MongoDB Connected: ${mongoose.connection.host}`);

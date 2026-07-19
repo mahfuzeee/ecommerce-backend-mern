@@ -20,10 +20,23 @@ const categoryController = {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
-      const categories = await categoryService.getAllCategories(page, limit);
+      const { categories, totalCategories } =
+        await categoryService.getAllCategories(page, limit);
+
+      const totalPages = Math.ceil(totalCategories / limit);
+
       return sendResponse(res, {
         message: "Categories retrieved successfully",
-        data: categories,
+        data: {
+          categories,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            totalCategories,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+          },
+        },
       });
     } catch (error) {
       return next(error);

@@ -9,9 +9,10 @@ const categorySchema = new mongoose.Schema(
       ref: "Category",
       default: null,
     },
+    images: { type: String, required: true },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 const Category = mongoose.model("Category", categorySchema);

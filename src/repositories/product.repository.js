@@ -6,8 +6,49 @@ const productRepository = {
   createProduct: async (product) => {
     return await Product.create(product);
   },
-  getAllProducts: async () => {
-    return await Product.find().sort({ createdAt: -1 });
+  getAllProducts: async (query) => {
+    try {
+      const { page, limit, category_id, brand_id, remark, keyword } = query;
+      const skip = (page - 1) * limit;
+
+      let matchStage;
+      if (category_id) {
+        matchStage = { $match: { category: new objectId(category_id) } };
+      } else if (brand_id) {
+        matchStage = { $match: { brand: new objectId(brand_id) } };
+      } else if (remark) {
+        matchStage = { $match: { remark } };
+      } else if (keyword) {
+        let searchRegex = {
+          $regex: keyword,
+          $options: "i",
+        };
+        let searchParams = [{ title: searchRegex }];
+
+        let searchStage = {
+          $or: searchParams,
+        };
+        matchStage = { $match: { $and: [searchStage] } };
+      } else {
+        matchStage = { $match: {} };
+      }
+      const sortStage = { createdAt: -1 };
+      const facetStage = {
+        $facet: {
+          totalCount: [{ $count: "count" }],
+          data: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
+        },
+      };
+      const pipeline = [matchStage, facetStage];
+      const result = await Product.aggregate(pipeline);
+      const totalProducts = result[0]?.totalCount[0]?.count || 0;
+      const products = result[0]?.data || [];
+
+      return { products, totalProducts };
+    } catch (error) {
+      logger.error(error);
+      throw error;
+    }
   },
   //Get a product by Id
   getProductById: async (id) => {

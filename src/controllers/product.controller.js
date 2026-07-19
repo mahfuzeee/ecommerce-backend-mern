@@ -2,13 +2,39 @@ const productService = require("../services/product.service");
 const sendResponse = require("../utils/apiResponse");
 
 const productController = {
-  getAllProducts: async (_req, res, next) => {
+  getAllProducts: async (req, res, next) => {
     try {
-      const products = await productService.getAllProducts();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const category_id = req.query.category_id || null;
+      const brand_id = req.query.brand_id || null;
+      const remark = req.query.remark || null;
+      const keyword = req.query.keyword || null;
+      const query = {
+        page,
+        limit,
+        category_id,
+        brand_id,
+        remark,
+        keyword,
+      };
+      const { products, totalProducts } =
+        await productService.getAllProducts(query);
+
+      const totalPages = Math.ceil(totalProducts / limit);
 
       return sendResponse(res, {
         message: "Products fetched successfully",
-        data: products,
+        data: {
+          products,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+          },
+        },
       });
     } catch (error) {
       return next(error);
@@ -70,6 +96,7 @@ const productController = {
     }
   },
 
+  /*
   // Additional controller methods for product filtering and searching
   searchProducts: async (req, res, next) => {
     try {
@@ -98,6 +125,7 @@ const productController = {
       return next(error);
     }
   },
+  */
 };
 
 module.exports = productController;
