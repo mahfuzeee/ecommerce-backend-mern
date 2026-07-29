@@ -15,7 +15,7 @@ const brandRepository = {
     const facetStage = {
       $facet: {
         totalCount: [{ $count: "count" }],
-        brands: [
+        data: [
           { $sort: sortStage },
           { $skip: skip },
           { $limit: limit },
@@ -25,10 +25,10 @@ const brandRepository = {
     };
     const pipeline = [facetStage];
     const result = await Brand.aggregate(pipeline);
-    if (result.length === 0) {
-      return [];
-    }
-    return result;
+    const totalBrands = result[0]?.totalCount[0]?.count || 0;
+    const brands = result[0]?.data || [];
+
+    return { brands, totalBrands };
   },
 
   getBrandById: async (id) => {

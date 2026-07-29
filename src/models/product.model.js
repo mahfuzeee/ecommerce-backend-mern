@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema(
 
     stock: { type: Number, required: true, min: 0, default: 0 },
     color: { type: String, trim: true },
-    size: { type: String, trim: true },
+    size: [{ type: String, trim: true }], //Array of sizes
     discountPrice: Number,
     isDiscounted: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },

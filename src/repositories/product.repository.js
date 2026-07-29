@@ -23,7 +23,7 @@ const productRepository = {
           $regex: keyword,
           $options: "i",
         };
-        let searchParams = [{ title: searchRegex }];
+        let searchParams = [{ name: searchRegex }];
 
         let searchStage = {
           $or: searchParams,
@@ -33,10 +33,39 @@ const productRepository = {
         matchStage = { $match: {} };
       }
       const sortStage = { createdAt: -1 };
+      const joinWithCategoryStage = {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      };
+      const joinWithBrandStage = {
+        $lookup: {
+          from: "brands",
+          localField: "brand",
+          foreignField: "_id",
+          as: "brand",
+        },
+      };
+
+      const unwindCategoryStage = { $unwind: "$category" };
+      const unwindBrandStage = { $unwind: "$brand" };
+
       const facetStage = {
         $facet: {
           totalCount: [{ $count: "count" }],
-          data: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
+          data: [
+            { $sort: sortStage },
+            { $skip: skip },
+            { $limit: limit },
+            joinWithCategoryStage,
+            joinWithBrandStage,
+            unwindCategoryStage,
+            unwindBrandStage,
+            { $project: { updatedAt: 0 } },
+          ],
         },
       };
       const pipeline = [matchStage, facetStage];

@@ -4,7 +4,7 @@ const loger = require("../utils/logger");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
+    name: { type: String },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true, select: false }, // Hide by default
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
       zipCode: String,
       country: String,
     },
-    phone: { type: String, required: true },
+    phone: { type: String },
     shippingAddress: {
       address: String,
       street: String,
