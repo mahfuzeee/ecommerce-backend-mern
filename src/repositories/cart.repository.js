@@ -87,7 +87,6 @@ const cartRepository = {
       //Project the required fields from the cart and joined collections
       const projectionStage = {
         $project: {
-          _id: 0,
           user_id: 0,
           createdAt: 0,
           updatedAt: 0,
@@ -105,7 +104,6 @@ const cartRepository = {
             brand: 0,
             category: 0,
             sku: 0,
-            images: 0,
             createdAt: 0,
             updatedAt: 0,
           },

@@ -38,7 +38,7 @@ const invoiceRepository = {
     const facetStage = {
       $facet: {
         totalCount: [{ $count: "count" }],
-        data: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
+        invoices: [{ $sort: sortStage }, { $skip: skip }, { $limit: limit }],
       },
     };
     const pipeline = [matchStage, facetStage];

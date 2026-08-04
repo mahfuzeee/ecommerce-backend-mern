@@ -19,8 +19,7 @@ const userRepository = {
       const projection = {
         $project: {
           _id: 0,
-          name: 1,
-          email: 1,
+          password: 0,
         },
       };
       const user = await User.aggregate([matchStage, projection]);

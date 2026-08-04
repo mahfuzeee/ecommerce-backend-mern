@@ -96,15 +96,15 @@ const userController = {
 
   updateUser: async (req, res, next) => {
     try {
-      const { name, email, password } = req.body;
+      const { password } = req.body;
       const _id = req.headers._id;
-      const updatedData = { name, email };
+      // const updatedData = { name, email };
       if (password) {
         updatedData.password = await bcrypt.hash(password, 10);
       }
       const updatedUser = await userservice.updateUser(
         _id.toString(),
-        updatedData,
+        req.body,
       );
 
       const token = generateToken(
