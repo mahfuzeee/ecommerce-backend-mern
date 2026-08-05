@@ -1,4 +1,3 @@
-const { getFileById } = require("../controllers/file.controller");
 const File = require("../models/file.model");
 
 const fileRepository = {

@@ -1,5 +1,4 @@
 const Review = require("../models/review.model");
-const { getReviewsByProduct } = require("../services/review.service");
 const mongoose = require("mongoose");
 
 const reviewRepository = {

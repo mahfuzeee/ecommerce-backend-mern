@@ -33,7 +33,7 @@ const invoiceService = {
         }
 
         let vat = totalAmount * 0.15; // Example VAT calculation (15% of total amount)
-        let shippingCost = 75; // Example fixed shipping cost
+        let shippingCost = 80; // Example fixed shipping cost
 
         totalPayable = totalAmount + vat + shippingCost; // Add VAT and shipping cost to total amount
         console.log(`Total amount for invoice: ${totalAmount}`);
