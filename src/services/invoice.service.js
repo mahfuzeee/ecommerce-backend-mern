@@ -29,13 +29,13 @@ const invoiceService = {
           } else {
             price = parseFloat(item?.product?.price);
           }
-          totalAmount += price * parseInt(item?.quantity); // item.price * item.quantity;
+          totalAmount += price * item?.quantity; // item.price * item.quantity;
         }
 
-        let vat = totalAmount * 0.15; // Example VAT calculation (15% of total amount)
+        let vat = parseInt(totalAmount) * 0.15; // Example VAT calculation (15% of total amount)
         let shippingCost = 80; // Example fixed shipping cost
 
-        totalPayable = totalAmount + vat + shippingCost; // Add VAT and shipping cost to total amount
+        totalPayable = parseInt(totalAmount) + vat + shippingCost; // Add VAT and shipping cost to total amount
         console.log(`Total amount for invoice: ${totalAmount}`);
 
         //==========Step 2: Prepare customer and shipping details==========//

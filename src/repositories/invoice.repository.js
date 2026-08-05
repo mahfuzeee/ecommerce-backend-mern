@@ -64,13 +64,8 @@ const invoiceRepository = {
       },
     };
 
-    const unwindStage = { $unwind: "$invoiceProducts" };
-    const products = await Invoice.aggregate([
-      matchStage,
-      lookupStage,
-      unwindStage,
-    ]);
-    return products;
+    const invoices = await Invoice.aggregate([matchStage, lookupStage]);
+    return invoices[0] || null;
   },
 
   //Update invoice payment status
