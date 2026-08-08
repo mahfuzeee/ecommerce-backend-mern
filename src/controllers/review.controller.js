@@ -1,12 +1,22 @@
 const reviewService = require("../services/review.service");
 const sendResponse = require("../utils/apiResponse");
+const ApiError = require("../utils/ApiError");
 
 const reviewController = {
   createReview: async (req, res, next) => {
     try {
-      const user_id = req.headers._id; // Assuming user ID is sent in headers after authentication
-      req.body.user_id = user_id; // Attach user ID to the review data
-      const review = await reviewService.createReview(req.body);
+      const userId = req.headers._id;
+
+      if (!userId) {
+        return next(new ApiError(401, "Unauthorized"));
+      }
+
+      const reviewData = {
+        ...(req.body || {}),
+        user_id: userId,
+      };
+
+      const review = await reviewService.createReview(reviewData);
       return sendResponse(res, {
         statusCode: 201,
         message: "Review created successfully",

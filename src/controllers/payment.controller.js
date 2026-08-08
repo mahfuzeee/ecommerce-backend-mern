@@ -1,7 +1,7 @@
 const paymentService = require("../services/payment.service");
 const sendResponse = require("../utils/apiResponse");
 
-let redirect_url = "/" + process.env.CLIENT_URL + "/cart-thank-you"; //redirect if payment success
+let redirect_url = "http://localhost:5173/cart-thank-you"; //redirect if payment success
 const paymentController = {
   paymentSuccess: async (req, res, next) => {
     const transactionId = req.params.trx_id;
