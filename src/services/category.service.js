@@ -5,6 +5,9 @@ const logger = require("../utils/logger");
 
 const categoryService = {
   createCategory: async (category) => {
+    if (!category.slug) {
+      category.slug = category.name.trim().toLowerCase().replace(/\s+/g, "-");
+    }
     return await categoryRepository.createCategory(category);
   },
 

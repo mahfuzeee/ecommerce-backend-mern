@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     slug: { type: String, unique: true },
     description: { type: String, default: "", trim: true },
+    short_des: { type: String, default: "", trim: true },
     price: {
       type: Number,
       required: [true, "Price is required"],
@@ -24,13 +25,14 @@ const productSchema = new mongoose.Schema(
     },
 
     stock: { type: Number, required: true, min: 0, default: 0 },
-    color: { type: String, trim: true },
+    color: [{ type: String, trim: true }],
     size: [{ type: String, trim: true }], //Array of sizes
     discountPrice: Number,
     isDiscounted: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     sku: { type: String, unique: true },
     images: [{ type: String }], // Array of image URLs
+    remark: { type: String, default: "" },
     ratings: {
       average: { type: Number, default: 0 },
       count: { type: Number, default: 0 },

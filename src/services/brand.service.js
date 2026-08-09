@@ -3,6 +3,9 @@ const ApiError = require("../utils/ApiError");
 
 const brandService = {
   createBrand: async (brand) => {
+    if (!brand.slug) {
+      brand.slug = brand.name.trim().toLowerCase().replace(/\s+/g, "-");
+    }
     return await brandRepository.createBrand(brand);
   },
 
