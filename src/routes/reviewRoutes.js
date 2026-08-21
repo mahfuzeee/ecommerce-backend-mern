@@ -1,13 +1,14 @@
 const reviewController = require("../controllers/review.controller");
 const express = require("express");
 const authVerificationUser = require("../middlewares/authVerificationUser");
+const authVerificationAny = require("../middlewares/authVerificationAny");
 const router = express.Router();
 
 router.post("/", authVerificationUser, reviewController.createReview);
-router.get("/all", authVerificationUser, reviewController.getAllReviews);
+router.get("/all", authVerificationAny, reviewController.getAllReviews);
 router.get(
   "/product/:productId",
-  authVerificationUser,
+  authVerificationAny,
   reviewController.getReviewsByProduct,
 );
 
