@@ -13,7 +13,7 @@ const orderService = {
       fromDate,
       toDate,
     );
-    if (orders.length === 0) {
+    if (orders.orders.length === 0) {
       throw new ApiError(404, "No orders found");
     }
     return orders;
@@ -111,7 +111,7 @@ const orderService = {
     // Convert to CSV
     const parser = new Parser({ fields });
 
-    const csv = parser.parse(orders[0].data);
+    const csv = parser.parse(orders.orders);
     return csv;
   },
 };

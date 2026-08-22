@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Invoice = require("../models/invoice.model");
-const { transform } = require("zod");
 
 const objectId = mongoose.Types.ObjectId;
 
@@ -106,31 +105,27 @@ const invoiceRepository = {
       },
     };
 
-    const unwindProductStage = { $unwind: "$invoiceProducts" };
     const projectionStage = {
       $project: {
-        totalCount: 1,
-        data: {
-          _id: 1,
-          user_id: 1,
-          payableAmount: 1,
-          cus_details: 1,
-          ship_details: 1,
-          tran_id: 1,
-          val_id: 1,
-          delivery_status: 1,
-          payment_status: 1,
-          vat: 1,
-          totalAmount: 1,
-          createdAt: 1,
-          invoiceProducts: {
-            product_id: 1,
-            product_name: 1,
-            quantity: 1,
-            price: 1,
-            color: 1,
-            size: 1,
-          },
+        _id: 1,
+        user_id: 1,
+        payableAmount: 1,
+        cus_details: 1,
+        ship_details: 1,
+        tran_id: 1,
+        val_id: 1,
+        delivery_status: 1,
+        payment_status: 1,
+        vat: 1,
+        totalAmount: 1,
+        createdAt: 1,
+        invoiceProducts: {
+          product_id: 1,
+          product_name: 1,
+          quantity: 1,
+          price: 1,
+          color: 1,
+          size: 1,
         },
       },
     };
@@ -147,15 +142,18 @@ const invoiceRepository = {
     const pipeline = [
       matchStage,
       joinWithProductStage,
-      unwindProductStage,
-      facetStage,
       projectionStage,
+      facetStage,
     ];
     const result = await Invoice.aggregate(pipeline);
     if (result.length === 0) {
-      return [];
+      return { totalCount: 0, orders: [] };
     }
-    return result;
+
+    return {
+      totalCount: result[0].totalCount[0]?.count || 0,
+      orders: result[0].data,
+    };
   },
 
   //update oreders delivery status

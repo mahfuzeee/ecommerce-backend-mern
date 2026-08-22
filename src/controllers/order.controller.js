@@ -5,8 +5,8 @@ const orderController = {
   getAllOrders: async (req, res, next) => {
     try {
       //Retrieve query data
-      const page = req.query.page || 1;
-      const limit = req.query.limit || 10;
+      const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+      const limit = Math.max(Number.parseInt(req.query.limit, 10) || 10, 1);
       const { from, to } = req.query;
 
       const fromDate = from

@@ -18,88 +18,79 @@ const reviewRepository = {
     }
   },
 
-  // This method is added to retrieve all reviews, which can be useful for admin purposes
   getAllReviews: async (query) => {
-    // Implement pagination, filtering, and sorting logic based on the query parameters
-    try {
-      const {
-        page = 1,
-        limit = 10,
-        sortBy = "createdAt",
-        order = "desc",
-      } = query;
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "createdAt",
+      order = "desc",
+    } = query;
+    const pageNumber = Math.max(Number(page) || 1, 1);
+    const limitNumber = Math.max(Number(limit) || 10, 1);
+    const skip = (pageNumber - 1) * limitNumber;
+    const sortOrder = order === "asc" ? 1 : -1;
 
-      const skip = (page - 1) * limit;
-      const sortOrder = order === "asc" ? 1 : -1;
-
-      const sortStage = { [sortBy]: sortOrder };
-      const joinWithUserStage = {
-        $lookup: {
-          from: "users",
-          localField: "user_id",
-          foreignField: "_id",
-          as: "user",
-        },
-      };
-      const joinWithProductStage = {
-        $lookup: {
-          from: "products",
-          localField: "product_id",
-          foreignField: "_id",
-          as: "product",
-        },
-      };
-
-      const unwindUserStage = { $unwind: "$user" };
-      const unwindProductStage = { $unwind: "$product" };
-
-      const projectionStage = {
-        $project: {
-          _id: 1,
-          description: 1,
-          rating: 1,
-          comment: 1,
-          createdAt: 1,
-          user: {
-            _id: 1,
-            name: 1,
-          },
-          product: {
-            _id: 1,
-            name: 1,
-            price: 1,
-          },
-        },
-      };
-
-      const facetStage = {
+    const reviews = await Review.aggregate([
+      {
         $facet: {
           totalCount: [{ $count: "count" }],
           reviews: [
-            { $sort: sortStage },
+            { $sort: { [sortBy]: sortOrder } },
             { $skip: skip },
-            { $limit: limit },
-            joinWithUserStage,
-            unwindUserStage,
-            joinWithProductStage,
-            unwindProductStage,
-            projectionStage,
+            { $limit: limitNumber },
+            {
+              $lookup: {
+                from: "users",
+                localField: "user_id",
+                foreignField: "_id",
+                as: "user",
+              },
+            },
+            {
+              $unwind: {
+                path: "$user",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product",
+              },
+            },
+            {
+              $unwind: {
+                path: "$product",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                user_id: 1,
+                product_id: 1,
+                invoice_id: 1,
+                description: 1,
+                rating: 1,
+                comment: 1,
+                createdAt: 1,
+                user: { _id: 1, name: 1, email: 1 },
+                product: { _id: 1, name: 1, price: 1, images: 1 },
+              },
+            },
           ],
         },
-      };
+      },
+    ]);
 
-      const reviews = await Review.aggregate([facetStage]);
-
-      if (reviews.length === 0) {
-        throw new Error("No reviews found");
-      }
-
-      return reviews;
-    } catch (error) {
-      throw error;
-    }
+    const result = reviews[0];
+    return {
+      totalCount: result.totalCount[0]?.count || 0,
+      reviews: result.reviews,
+    };
   },
-
   // This method is added to retrieve all reviews for a specific product
   getReviewsByProduct: async (productId) => {
     try {

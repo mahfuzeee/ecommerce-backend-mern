@@ -6,7 +6,6 @@ const reviewService = {
   },
   // This method is added to retrieve all reviews, which can be useful for admin purposes
   getAllReviews: async (query) => {
-    // Implement pagination, filtering, and sorting logic based on the query parameters
     // For simplicity, we will just return all reviews here
     return await reviewRepository.getAllReviews(query);
   },
