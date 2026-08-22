@@ -11,7 +11,7 @@ const invoiceRepository = {
     try {
       const invoice = await Invoice.create({
         user_id: new objectId(invoiceData.userId),
-        payableAmount: parseFloat(invoiceData.totalPayable).toFixed(2),
+        payableAmount: parseInt(invoiceData.totalPayable),
         cus_details: invoiceData.customerDetails,
         ship_details: invoiceData.shippingDetails,
         tran_id: invoiceData.transactionId,

@@ -29,7 +29,7 @@ const invoiceService = {
           } else {
             price = parseFloat(item?.product?.price);
           }
-          totalAmount += price * item?.quantity; // item.price * item.quantity;
+          totalAmount += price * Number(item?.quantity); // item.price * item.quantity;
         }
 
         let vat = parseInt(totalAmount) * 0.15; // Example VAT calculation (15% of total amount)
@@ -43,16 +43,19 @@ const invoiceService = {
         const user = await userRepository.getUserById(userId);
 
         //Check if user details are complete
-        if (
-          [
-            user?.email,
-            user?.name,
-            user?.phone,
-            user?.addresses?.address,
-            user?.addresses?.city,
-            user?.addresses?.country,
-          ].every((field) => field === undefined)
-        ) {
+        const requiredFields = [
+          user?.email,
+          user?.name,
+          user?.phone,
+          user?.addresses?.address,
+          user?.addresses?.city,
+          user?.addresses?.country,
+          user?.shippingAddress?.address,
+          user?.shippingAddress?.city,
+          user?.shippingAddress?.country,
+        ];
+
+        if (requiredFields.some((field) => !field)) {
           throw new ApiError(
             400,
             "User details are incomplete for invoice creation",
@@ -93,7 +96,6 @@ const invoiceService = {
           validationId,
           totalAmount,
           vat,
-          totalAmount,
         };
 
         const invoice = await invoiceRepository.createInvoice(invoiceData);
@@ -108,7 +110,7 @@ const invoiceService = {
             invoiceId,
             product_name: item?.product_name,
             quantity: item?.quantity,
-            price: item?.procuct?.isDiscounted
+            price: item?.product?.isDiscounted
               ? item?.product?.discountPrice
               : item?.product?.price,
             color: item?.color,
