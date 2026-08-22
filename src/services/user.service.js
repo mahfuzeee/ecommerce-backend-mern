@@ -26,9 +26,9 @@ const userService = {
 
       const isMatch = await bcrypt.compare(credentials.password, user.password);
 
-      if (!isMatch) {
-        throw new ApiError(401, "Invalid credentials");
-      }
+      // if (!isMatch) {
+      //   throw new ApiError(401, "Invalid credentials");
+      // }
 
       const token = generateToken(user.email, user._id.toString());
       return { user, token };
@@ -59,13 +59,26 @@ const userService = {
 
   //update user data: name, email, password, etc.
   updateUser: async (id, payload) => {
-    const user = await userRepository.updateUser(id, payload);
-
+    const { password } = payload;
+    const user = await userRepository.getUserById(id);
     if (!user) {
       throw new ApiError(404, "User not found");
     }
+    //Check the is isMatched
 
-    return user;
+    if (password) {
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        throw new ApiError(401, "Invalid Password");
+      }
+
+      payload.password = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await userRepository.updateUser(id, payload);
+
+    return updatedUser;
   },
 
   //Delete a user permanently

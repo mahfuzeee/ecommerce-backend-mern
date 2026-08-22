@@ -3,6 +3,7 @@ const ApiError = require("../utils/ApiError");
 const sendResponse = require("../utils/apiResponse");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/tokenHelpers");
+const logger = require("../utils/logger");
 
 const options = {
   maxAge: process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
@@ -96,16 +97,9 @@ const userController = {
 
   updateUser: async (req, res, next) => {
     try {
-      const { password } = req.body;
       const _id = req.headers._id;
-      // const updatedData = { name, email };
-      if (password) {
-        updatedData.password = await bcrypt.hash(password, 10);
-      }
-      const updatedUser = await userservice.updateUser(
-        _id.toString(),
-        req.body,
-      );
+
+      const updatedUser = await userservice.updateUser(_id, req.body);
 
       const token = generateToken(
         updatedUser.email,

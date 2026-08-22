@@ -36,7 +36,7 @@ const userRepository = {
 
   getUserById: async (userId) => {
     const id = new objectId(userId);
-    return await User.findById(id);
+    return await User.findById(id).select("+password");
   },
 
   //updata user data: name, password, etc.
