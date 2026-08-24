@@ -15,6 +15,12 @@ const productService = {
     return product;
   },
   createProduct: async (product) => {
+    if (!product.slug) {
+      product.slug = product.name.replace(/\s+/g, "-").toLowerCase();
+    }
+    if (!product.sku) {
+      product.sku = Math.floor(Math.random() * 1000000);
+    }
     return await productRepository.createProduct(product);
   },
   updateProduct: async (id, payload) => {

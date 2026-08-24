@@ -81,7 +81,39 @@ const productRepository = {
   },
   //Get a product by Id
   getProductById: async (id) => {
-    return await Product.findById(id);
+    const matchStage = { $match: { _id: new objectId(id) } };
+    const joinWithBrandStage = {
+      $lookup: {
+        from: "brands",
+        localField: "brand",
+        foreignField: "_id",
+        as: "brand",
+        pipeline: [{ $project: { _id: 0, name: 1 } }],
+      },
+    };
+    const unwindBrandStage = { $unwind: "$brand" };
+    const joinWithCategoryStage = {
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "category",
+        pipeline: [{ $project: { _id: 0, name: 1 } }],
+      },
+    };
+    const unwindCategoryStage = { $unwind: "$category" };
+    const pipeline = [
+      matchStage,
+      joinWithBrandStage,
+      unwindBrandStage,
+      joinWithCategoryStage,
+      unwindCategoryStage,
+    ];
+    const [product] = await Product.aggregate(pipeline);
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    return product;
   },
   updateProduct: async (id, product) => {
     return await Product.findByIdAndUpdate(id, product, {

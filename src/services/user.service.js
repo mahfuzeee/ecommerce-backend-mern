@@ -60,6 +60,9 @@ const userService = {
   //update user data: name, email, password, etc.
   updateUser: async (id, payload) => {
     const { password } = payload;
+    if (!payload.shippingName) {
+      payload.shippingName = payload.name;
+    }
     const user = await userRepository.getUserById(id);
     if (!user) {
       throw new ApiError(404, "User not found");

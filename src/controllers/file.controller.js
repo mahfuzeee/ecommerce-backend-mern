@@ -2,7 +2,7 @@ const fs = require("fs");
 const fileService = require("../services/file.service");
 const sendResponse = require("../utils/apiResponse");
 const path = require("path");
-const apiError = require("../utils/ApiError");
+const ApiError = require("../utils/ApiError");
 
 const fileController = {
   // Upload a file
