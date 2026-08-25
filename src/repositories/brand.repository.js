@@ -1,4 +1,5 @@
 const Brand = require("../models/brand.model");
+const Product = require("../models/product.model");
 const ApiError = require("../utils/ApiError");
 
 const brandRepository = {
@@ -19,6 +20,24 @@ const brandRepository = {
           { $sort: sortStage },
           { $skip: skip },
           { $limit: limit },
+          {
+            $lookup: {
+              from: Product.collection.name,
+              let: { brandId: "$_id" },
+              pipeline: [
+                { $match: { $expr: { $eq: ["$brand", "$$brandId"] } } },
+                { $count: "count" },
+              ],
+              as: "productCount",
+            },
+          },
+          {
+            $set: {
+              productCount: {
+                $ifNull: [{ $arrayElemAt: ["$productCount.count", 0] }, 0],
+              },
+            },
+          },
           { $project: { updatedAt: 0 } },
         ],
       },

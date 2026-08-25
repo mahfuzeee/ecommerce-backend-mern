@@ -1,5 +1,5 @@
 const Category = require("../models/category.model");
-const ApiError = require("../utils/ApiError");
+const Product = require("../models/product.model");
 
 const categoryRepository = {
   createCategory: async (category) => {
@@ -17,6 +17,24 @@ const categoryRepository = {
           { $sort: sortStage },
           { $skip: skip },
           { $limit: limit },
+          {
+            $lookup: {
+              from: Product.collection.name,
+              let: { categoryId: "$_id" },
+              pipeline: [
+                { $match: { $expr: { $eq: ["$category", "$$categoryId"] } } },
+                { $count: "count" },
+              ],
+              as: "productCount",
+            },
+          },
+          {
+            $set: {
+              productCount: {
+                $ifNull: [{ $arrayElemAt: ["$productCount.count", 0] }, 0],
+              },
+            },
+          },
           { $project: { updatedAt: 0 } },
         ],
       },
