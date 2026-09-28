@@ -1,6 +1,9 @@
 const Product = require("../models/product.model");
 const logger = require("../utils/logger");
 const objectId = require("mongoose").Types.ObjectId;
+const ApiError = require("../utils/ApiError");
+
+//Product Repository
 
 const productRepository = {
   createProduct: async (product) => {
@@ -81,6 +84,9 @@ const productRepository = {
   },
   //Get a product by Id
   getProductById: async (id) => {
+    if (!objectId.isValid(id)) {
+      throw new ApiError(400, "Invalid product id");
+    }
     const matchStage = { $match: { _id: new objectId(id) } };
     const joinWithBrandStage = {
       $lookup: {
@@ -111,7 +117,7 @@ const productRepository = {
     ];
     const [product] = await Product.aggregate(pipeline);
     if (!product) {
-      throw new Error("Product not found");
+      throw new ApiError(404, "Product not found");
     }
     return product;
   },

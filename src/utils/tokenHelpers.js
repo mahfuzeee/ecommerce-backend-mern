@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 exports.generateToken = (email, _id) => {
   const key = process.env.JWT_SECRET;
-  const expiresIn = process.env.Jwt_expires_in;
+  const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
 
   const payload = { email, _id };
 

@@ -33,7 +33,7 @@ const adminRepository = {
 
   //Update admin
   updateAdmin: async (_id, data) => {
-    const admin = await Admin.findByIdAndUpdate({ _id }, data, {
+    const admin = await Admin.findByIdAndUpdate(_id, data, {
       new: true,
     });
     return admin;

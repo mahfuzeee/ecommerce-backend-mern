@@ -1,15 +1,14 @@
 const userservice = require("../services/user.service");
 const ApiError = require("../utils/ApiError");
 const sendResponse = require("../utils/apiResponse");
-const bcrypt = require("bcryptjs");
+
 const { generateToken } = require("../utils/tokenHelpers");
-const logger = require("../utils/logger");
 
 const options = {
-  maxAge: process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
-  httpOnly: false,
-  sameSite: "none",
-  secure: true,
+  maxAge: Number(process.env.COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "production",
 };
 
 const userController = {

@@ -26,9 +26,9 @@ const userService = {
 
       const isMatch = await bcrypt.compare(credentials.password, user.password);
 
-      // if (!isMatch) {
-      //   throw new ApiError(401, "Invalid credentials");
-      // }
+      if (!isMatch) {
+        throw new ApiError(401, "Invalid credentials");
+      }
 
       const token = generateToken(user.email, user._id.toString());
       return { user, token };

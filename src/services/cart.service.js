@@ -10,13 +10,16 @@ const cartService = {
       const { user_id, product_id, product_name, color, size, quantity } =
         cartData;
 
+      //Validate the requested quantity
+      const requestedQty = Number(quantity);
+      if (requestedQty <= 0) throw new ApiError(400, "Invalid quantity");
+
       // Check if the product exists
       const product = await productRepository.getProductById(product_id);
       if (!product) {
         throw new ApiError(400, "Product not found");
       }
 
-      console.log(`product.stock: ${product.stock}`);
       //Check if the product is already in the cart for the user
       const existingCart = await cartRepository.getCartItemsByUserAndProduct(
         user_id,
@@ -43,15 +46,12 @@ const cartService = {
         //console.log(carts);
 
         const totalQuantity = carts.reduce(
-          (total, cart) => total + parseInt(cart.quantity),
+          (total, cart) => total + Number(cart.quantity),
           0,
         );
 
-        console.log(
-          `totalQuantity: ${totalQuantity}, product.stock: ${product.stock}`,
-        );
-
-        if (totalQuantity > product?.stock) {
+        //Check if the total quantity exceeds the available stock
+        if (totalQuantity + requestedQty > product?.stock) {
           throw new ApiError(400, "Requested quantity exceeds available stock");
         }
 

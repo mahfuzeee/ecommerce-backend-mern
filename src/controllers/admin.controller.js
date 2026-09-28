@@ -5,10 +5,10 @@ const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/tokenHelpers");
 
 const options = {
-  maxAge: process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
+  maxAge: Number(process.env.COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000,
   httpOnly: false,
-  sameSite: "none",
-  secure: true,
+  // sameSite: process.env.NODE_ENV === "production" ? "none" : "none",
+  // secure: process.env.NODE_ENV === "production" ? true : false,
 };
 
 const adminController = {

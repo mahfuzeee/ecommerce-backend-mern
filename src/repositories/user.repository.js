@@ -23,7 +23,7 @@ const userRepository = {
         },
       };
       const user = await User.aggregate([matchStage, projection]);
-      return user;
+      return user[0] || null;
     } catch (error) {
       return new ApiError(500, "Server Error");
     }

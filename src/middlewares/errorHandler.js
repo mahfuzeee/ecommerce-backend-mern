@@ -14,6 +14,10 @@ const errorHandler = (err, req, res, _next) => {
     statusCode = 400;
     message = "Invalid resource id";
   }
+  if (err.name === "MongoServerError" && err.code === 11000) {
+    statusCode = 409;
+    message = "Duplicate field value entered";
+  }
 
   logger.error({ err, method: req.method, url: req.originalUrl }, message);
 

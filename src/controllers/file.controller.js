@@ -60,13 +60,11 @@ const fileController = {
         throw new ApiError(400, "File id and filename are required");
       }
 
-      const filePath = path.join(__dirname, `../../uploads/${filename}`);
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-        }
-      });
+      const filePath = path.resolve(__dirname, "../../uploads", filename);
 
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
       const file = await fileService.deleteFile(id);
       return sendResponse(res, {
         message: "File deleted successfully",
