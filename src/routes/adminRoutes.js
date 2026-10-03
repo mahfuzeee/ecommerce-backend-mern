@@ -5,10 +5,9 @@ const authVerificationAdmin = require("../middlewares/authVerificationAdmin");
 
 const router = express.Router();
 
-router.post(
-  "/register",
-  process.env.NODE_ENV === "production" ? null : adminController.createAdmin,
-);
+if (process.env.NODE_ENV !== "production") {
+  router.post("/register", adminController.createAdmin);
+}
 router.post("/login", adminController.login);
 router.get("/", authVerificationAdmin, adminController.admin);
 router.get("/verify", authVerificationAdmin, adminController.adminVerify);
