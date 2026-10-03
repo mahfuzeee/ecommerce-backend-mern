@@ -1,14 +1,17 @@
 require("dotenv").config();
 const pino = require("pino");
 
-const logger = pino({
+const options = {
   level: process.env.LOG_LEVEL || "info",
-  transport: {
+};
+
+if (process.env.NODE_ENV !== "production") {
+  options.transport = {
     target: "pino-pretty",
-    options: {
-      colorize: true,
-    },
-  },
-});
+    options: { colorize: true },
+  };
+}
+
+const logger = pino(options);
 
 module.exports = logger;
