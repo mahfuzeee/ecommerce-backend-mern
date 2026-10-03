@@ -1,5 +1,6 @@
 const express = require("express");
 const productController = require("../controllers/product.controller");
+const authVerificationAdmin = require("../middlewares/authVerificationAdmin");
 
 const router = express.Router();
 
@@ -7,7 +8,7 @@ const router = express.Router();
 router
   .route("/")
   .get(productController.getAllProducts)
-  .post(productController.createProduct);
+  .post(authVerificationAdmin, productController.createProduct);
 
 /*
 //Additional routes for product filtering and searching
@@ -18,7 +19,7 @@ router.get("/filter", productController.filterProducts);
 router
   .route("/:id")
   .get(productController.getProductById)
-  .put(productController.updateProduct)
-  .delete(productController.deleteProduct);
+  .put(authVerificationAdmin, productController.updateProduct)
+  .delete(authVerificationAdmin, productController.deleteProduct);
 
 module.exports = router;

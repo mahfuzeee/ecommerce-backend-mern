@@ -6,9 +6,19 @@ const { generateToken } = require("../utils/tokenHelpers");
 
 const options = {
   maxAge: Number(process.env.COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000,
-  httpOnly: false,
-  // sameSite: process.env.NODE_ENV === "production" ? "none" : "none",
-  // secure: process.env.NODE_ENV === "production" ? true : false,
+  httpOnly: true,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+  partitioned: true,
+};
+
+const clearOptions = {
+  httpOnly: options.httpOnly,
+  sameSite: options.sameSite,
+  secure: options.secure,
+  path: options.path,
+  partitioned: options.partitioned,
 };
 
 const adminController = {
@@ -93,7 +103,7 @@ const adminController = {
   //Admin Logout
   adminLogout: async (req, res, next) => {
     try {
-      res.clearCookie("a_token", options);
+      res.clearCookie("a_token", clearOptions);
       return sendResponse(res, {
         message: "Admin logged out successfully",
       });

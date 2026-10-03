@@ -10,6 +10,15 @@ const options = {
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   secure: process.env.NODE_ENV === "production",
   path: "/",
+  partitioned: true,
+};
+
+const clearOptions = {
+  httpOnly: options.httpOnly,
+  sameSite: options.sameSite,
+  secure: options.secure,
+  path: options.path,
+  partitioned: options.partitioned,
 };
 
 const userController = {
@@ -58,7 +67,7 @@ const userController = {
   //logout user
   logoutUser: async (req, res, next) => {
     try {
-      res.clearCookie("u_token");
+      res.clearCookie("u_token", clearOptions);
       return sendResponse(res, { message: "User logged out successfully" });
     } catch (error) {
       return next(error);
@@ -119,7 +128,7 @@ const userController = {
   deleteUser: async (req, res, next) => {
     try {
       const user = await userservice.deleteUser(req.headers._id.toString());
-      res.clearCookie("u_token");
+      res.clearCookie("u_token", clearOptions);
 
       return sendResponse(res, {
         message: "User deleted successfully",
