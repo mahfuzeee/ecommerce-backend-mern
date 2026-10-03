@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const adminController = require("../controllers/admin.controller");
 const authVerificationAdmin = require("../middlewares/authVerificationAdmin");
